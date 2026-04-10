@@ -3,9 +3,10 @@ import { loadConfig } from './config.js';
 import { resolveBuddy } from './buddy.js';
 import { resolveEmotion } from './emotion.js';
 import { parseTranscript } from './transcript.js';
-import { renderBuddy, renderBuddyInfo } from './render.js';
+import { renderBuddy, renderBuddyInfo, renderCharacterPreview } from './render.js';
 import { renderHUD } from './hud.js';
 import { setupStatusline, updateConfig } from './config.js';
+import { characters } from './characters/index.js';
 import { statSync } from 'node:fs';
 import type { HUDData } from './types.js';
 
@@ -103,6 +104,34 @@ function handleCli(args: string[]): void {
       break;
     }
 
+    case 'select': {
+      const filter = args[1]; // 선택적: species 이름으로 바로 선택
+      if (filter) {
+        const found = characters.find((c) => c.species === filter);
+        if (!found) {
+          console.log(`✗ '${filter}' 캐릭터를 찾을 수 없습니다.`);
+          console.log(`  사용 가능: ${characters.map((c) => c.species).join(', ')}`);
+          break;
+        }
+        const config = updateConfig('character', filter);
+        console.log(`✓ ${found.displayName} (${found.rarity}) 선택!`);
+        console.log(renderCharacterPreview(found));
+        break;
+      }
+      // 인자 없으면 전체 목록 표시
+      const currentConfig = loadConfig();
+      console.log('🎭 캐릭터를 선택하세요:\n');
+      for (const char of characters) {
+        const isCurrent = currentConfig.character === char.species;
+        const marker = isCurrent ? ' ← current' : '';
+        console.log(renderCharacterPreview(char) + marker);
+        console.log('');
+      }
+      console.log(`사용법: huddy select <species>`);
+      console.log(`예시: huddy select cat`);
+      break;
+    }
+
     case 'info': {
       const config = loadConfig();
       const buddy = resolveBuddy('preview', config);
@@ -115,6 +144,8 @@ function handleCli(args: string[]): void {
       console.log('');
       console.log('Commands:');
       console.log('  huddy setup          Register with Claude Code statusline');
+      console.log('  huddy select         Browse & pick your buddy character');
+      console.log('  huddy select <name>  Directly select a character');
       console.log('  huddy config show    Show current configuration');
       console.log('  huddy config set     Update a setting');
       console.log('  huddy info           Show buddy info and stats');
