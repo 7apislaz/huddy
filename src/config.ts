@@ -8,6 +8,7 @@ const CONFIG_PATH = join(CONFIG_DIR, 'config.json');
 
 const DEFAULT_CONFIG: HuddyConfig = {
   hudEnabled: true,
+  lang: 'ko',
 };
 
 /** ~/.huddy/config.json 로드. 없으면 기본값 반환. */
@@ -44,6 +45,9 @@ export function updateConfig(key: string, value: string): HuddyConfig {
       break;
     case 'hud':
       config.hudEnabled = value !== 'off' && value !== 'false';
+      break;
+    case 'lang':
+      config.lang = value === 'en' ? 'en' : 'ko';
       break;
     default:
       throw new Error(`Unknown config key: ${key}`);

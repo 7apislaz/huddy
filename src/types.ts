@@ -72,6 +72,7 @@ export interface HuddyConfig {
   name?: string;
   color?: string;
   hudEnabled: boolean;
+  lang: 'ko' | 'en';
 }
 
 // ── Transcript 파싱 결과 ──

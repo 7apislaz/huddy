@@ -7,6 +7,7 @@ import { renderBuddy, renderBuddyInfo, renderCharacterPreview } from './render.j
 import { renderHUD } from './hud.js';
 import { setupStatusline, updateConfig } from './config.js';
 import { characters } from './characters/index.js';
+import { t } from './i18n.js';
 import { statSync } from 'node:fs';
 import type { HUDData } from './types.js';
 
@@ -80,12 +81,13 @@ function getSessionDuration(transcriptPath?: string): number {
 /** CLI 서브커맨드 처리 */
 function handleCli(args: string[]): void {
   const cmd = args[0];
+  const lang = loadConfig().lang;
 
   switch (cmd) {
     case 'setup':
       setupStatusline();
-      console.log('✓ Claude Code statusline에 huddy가 등록되었습니다.');
-      console.log('  Claude Code를 재시작하면 버디가 나타납니다!');
+      console.log(t('setup_done', lang));
+      console.log(t('setup_restart', lang));
       break;
 
     case 'config': {
@@ -93,59 +95,54 @@ function handleCli(args: string[]): void {
       if (sub === 'show') {
         console.log(JSON.stringify(loadConfig(), null, 2));
       } else if (sub === 'set' && args[2] && args[3]) {
-        const config = updateConfig(args[2], args[3]);
+        updateConfig(args[2], args[3]);
         console.log(`✓ ${args[2]} = ${args[3]}`);
-        console.log(JSON.stringify(config, null, 2));
+        console.log(JSON.stringify(loadConfig(), null, 2));
       } else {
-        console.log('Usage: huddy config show | huddy config set <key> <value>');
-        console.log('Keys: character, name, color, hud');
+        console.log(t('config_usage', lang));
+        console.log(t('config_keys', lang));
       }
       break;
     }
 
     case 'select': {
-      const filter = args[1]; // 선택적: species 이름으로 바로 선택
+      const filter = args[1];
       if (filter) {
         const found = characters.find((c) => c.species === filter);
         if (!found) {
-          console.log(`✗ '${filter}' 캐릭터를 찾을 수 없습니다.`);
-          console.log(`  사용 가능: ${characters.map((c) => c.species).join(', ')}`);
+          const list = characters.map((c) => c.species).join(', ');
+          console.log(t('select_not_found', lang)(filter, list));
           break;
         }
-        const config = updateConfig('character', filter);
-        console.log(`✓ ${found.displayName} 선택!`);
+        updateConfig('character', filter);
+        console.log(t('select_done', lang)(found.displayName));
         console.log(renderCharacterPreview(found));
         break;
       }
-      // 인자 없으면 전체 목록 표시
       const currentConfig = loadConfig();
-      console.log('🎭 캐릭터를 선택하세요:\n');
+      console.log(t('select_prompt', lang));
       for (const char of characters) {
         const isCurrent = currentConfig.character === char.species;
-        const marker = isCurrent ? ' ← current' : '';
+        const marker = isCurrent ? t('select_current', lang) : '';
         console.log(renderCharacterPreview(char) + marker);
         console.log('');
       }
-      console.log(`사용법: huddy select <species>`);
-      console.log(`예시: huddy select cat`);
+      console.log(t('select_usage', lang));
+      console.log(t('select_example', lang));
       break;
     }
 
     case 'random': {
-      // 전체 캐릭터 중 랜덤 선택
-      const picked = characters[Math.floor(Math.random() * characters.length)];
-
-      // 10% 확률로 무지개, 나머지는 색상 랜덤
       const COLORS = ['red', 'green', 'yellow', 'blue', 'magenta', 'cyan', 'white'];
+      const picked = characters[Math.floor(Math.random() * characters.length)];
       const isRainbow = Math.random() < 0.2;
       const color = isRainbow ? 'rainbow' : COLORS[Math.floor(Math.random() * COLORS.length)];
 
-      // config에 저장
-      let config = updateConfig('character', picked.species);
-      config = updateConfig('color', color);
+      updateConfig('character', picked.species);
+      updateConfig('color', color);
 
       const colorLabel = isRainbow ? '🌈 RAINBOW' : color;
-      console.log(`✦ ${picked.displayName} + ${colorLabel} 뽑음!`);
+      console.log(t('random_result', lang)(picked.displayName, colorLabel));
       console.log(renderCharacterPreview(picked, color));
       break;
     }
@@ -158,16 +155,16 @@ function handleCli(args: string[]): void {
     }
 
     default:
-      console.log('huddy v0.1.0 — Tamagotchi CLI companion for Claude Code');
+      console.log(t('help_title', lang));
       console.log('');
-      console.log('Commands:');
-      console.log('  huddy setup          Register with Claude Code statusline');
-      console.log('  huddy select         Browse & pick your buddy character');
-      console.log('  huddy select <name>  Directly select a character');
-      console.log('  huddy config show    Show current configuration');
-      console.log('  huddy config set     Update a setting');
-      console.log('  huddy random         Random character + color (10% rainbow!)');
-      console.log('  huddy info           Show buddy info and stats');
+      console.log(t('help_commands', lang));
+      console.log(t('help_setup', lang));
+      console.log(t('help_select', lang));
+      console.log(t('help_select_name', lang));
+      console.log(t('help_random', lang));
+      console.log(t('help_config_show', lang));
+      console.log(t('help_config_set', lang));
+      console.log(t('help_info', lang));
       break;
   }
 }
