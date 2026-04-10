@@ -76,6 +76,43 @@ mkdir -p ~/.claude/commands
 cp docs/commands/*.md ~/.claude/commands/
 ```
 
+### Use with OMC HUD (or other statusline tools)
+
+Claude Code only supports one statusline command. To use huddy **alongside** OMC HUD or other tools, install the wrapper:
+
+```bash
+cp docs/wrapper/huddy-wrapper.mjs ~/.claude/hud/
+chmod +x ~/.claude/hud/huddy-wrapper.mjs
+```
+
+Then update `~/.claude/settings.json`:
+
+```json
+{
+  "statusLine": {
+    "type": "command",
+    "command": "node ${CLAUDE_CONFIG_DIR:-$HOME/.claude}/hud/huddy-wrapper.mjs"
+  }
+}
+```
+
+The wrapper runs huddy first (buddy + optional HUD), then your existing statusline tool. If huddy is not installed, it silently falls back to the existing tool only.
+
+Toggle huddy's HUD line independently:
+
+```bash
+huddy config set hud off   # Show buddy only, keep OMC HUD
+huddy config set hud on    # Show buddy + huddy HUD + OMC HUD
+```
+
+### Set your plan
+
+```bash
+huddy config set plan pro   # Pro / Max / Team / Enterprise / Free
+```
+
+This shows `[Pro]` or `[Max]` on the HUD and displays rate limits as **remaining** usage.
+
 ### Configuration
 
 ```bash
