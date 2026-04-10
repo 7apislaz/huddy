@@ -5,7 +5,6 @@ import type { CharacterDef } from '../types.js';
 export const penguin: CharacterDef = {
   species: 'penguin',
   displayName: 'Waddle',
-  rarity: 'Common',
   colorDefault: 'blue',
 
   frames: {

@@ -5,7 +5,6 @@ import type { CharacterDef } from '../types.js';
 export const dragon: CharacterDef = {
   species: 'dragon',
   displayName: 'Ember',
-  rarity: 'Rare',
   colorDefault: 'red',
 
   frames: {

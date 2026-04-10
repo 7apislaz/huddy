@@ -8,11 +8,6 @@ const CONFIG_PATH = join(CONFIG_DIR, 'config.json');
 
 const DEFAULT_CONFIG: HuddyConfig = {
   hudEnabled: true,
-  hudElements: {
-    context: true,
-    cost: true,
-    rateLimit: true,
-  },
 };
 
 /** ~/.huddy/config.json 로드. 없으면 기본값 반환. */
@@ -49,9 +44,6 @@ export function updateConfig(key: string, value: string): HuddyConfig {
       break;
     case 'hud':
       config.hudEnabled = value !== 'off' && value !== 'false';
-      break;
-    case 'plan':
-      config.plan = value as import('./types.js').Plan;
       break;
     default:
       throw new Error(`Unknown config key: ${key}`);

@@ -5,7 +5,6 @@ import type { CharacterDef } from '../types.js';
 export const blob: CharacterDef = {
   species: 'blob',
   displayName: 'Blobby',
-  rarity: 'Common',
   colorDefault: 'green',
 
   frames: {

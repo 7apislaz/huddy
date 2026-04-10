@@ -5,7 +5,6 @@ import type { CharacterDef } from '../types.js';
 export const rabbit: CharacterDef = {
   species: 'rabbit',
   displayName: 'Bun',
-  rarity: 'Common',
   colorDefault: 'white',
 
   frames: {

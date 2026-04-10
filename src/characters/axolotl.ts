@@ -5,7 +5,6 @@ import type { CharacterDef } from '../types.js';
 export const axolotl: CharacterDef = {
   species: 'axolotl',
   displayName: 'Axie',
-  rarity: 'Rare',
   colorDefault: 'magenta',
 
   frames: {

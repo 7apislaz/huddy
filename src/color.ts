@@ -1,9 +1,9 @@
 // zero-dep ANSI 색상 유틸. NO_COLOR / TERM=dumb 자동 감지.
 
+// statusline 모드에서는 stdout이 파이프라 isTTY=false → 강제 활성화
 const isColorDisabled =
   'NO_COLOR' in process.env ||
-  process.env.TERM === 'dumb' ||
-  !process.stdout.isTTY;
+  process.env.TERM === 'dumb';
 
 function wrap(open: string, close: string): (text: string) => string {
   if (isColorDisabled) return (text) => text;
@@ -33,4 +33,12 @@ const colorMap: Record<string, (text: string) => string> = {
 /** 색상 이름 문자열로 컬러 함수 가져오기 */
 export function getColor(name: string): (text: string) => string {
   return colorMap[name] ?? ((text: string) => text);
+}
+
+// 무지개 색상 순서
+const RAINBOW_COLORS = [red, yellow, green, cyan, blue, magenta];
+
+/** 라인 인덱스 기반으로 무지개 색상 적용 */
+export function rainbowLine(text: string, lineIndex: number): string {
+  return RAINBOW_COLORS[lineIndex % RAINBOW_COLORS.length](text);
 }

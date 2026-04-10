@@ -5,7 +5,6 @@ import type { CharacterDef } from '../types.js';
 export const octopus: CharacterDef = {
   species: 'octopus',
   displayName: 'Inky',
-  rarity: 'Uncommon',
   colorDefault: 'magenta',
 
   frames: {

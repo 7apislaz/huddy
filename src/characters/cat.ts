@@ -5,7 +5,6 @@ import type { CharacterDef } from '../types.js';
 export const cat: CharacterDef = {
   species: 'cat',
   displayName: 'Whiskers',
-  rarity: 'Common',
   colorDefault: 'magenta',
 
   frames: {

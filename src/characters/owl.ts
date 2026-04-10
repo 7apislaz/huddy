@@ -5,7 +5,6 @@ import type { CharacterDef } from '../types.js';
 export const owl: CharacterDef = {
   species: 'owl',
   displayName: 'Hoot',
-  rarity: 'Uncommon',
   colorDefault: 'cyan',
 
   frames: {

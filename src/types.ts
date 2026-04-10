@@ -27,8 +27,6 @@ export interface EmotionState {
 }
 
 // ── 캐릭터 ──
-export type Rarity = 'Common' | 'Uncommon' | 'Rare';
-
 export interface AsciiFrame {
   lines: string[]; // 5줄, 각 줄 최대 12자
 }
@@ -39,7 +37,6 @@ export type FrameSet = [AsciiFrame, AsciiFrame, AsciiFrame, AsciiFrame];
 export interface CharacterDef {
   species: string;
   displayName: string;
-  rarity: Rarity;
   frames: Record<Emotion, FrameSet>;
   colorDefault: string; // ANSI 색상 코드 기본값
 }
@@ -64,26 +61,17 @@ export interface BuddyInstance {
 // ── HUD ──
 export interface HUDData {
   contextPercent: number | null;
-  costUsd: number | null;
   rateLimit5h: { percent: number; resetsAt: Date | null } | null;
   rateLimit7d: { percent: number; resetsAt: Date | null } | null;
   sessionDurationMs: number;
 }
 
 // ── 설정 ──
-export type Plan = 'pro' | 'max' | 'team' | 'enterprise' | 'free';
-
 export interface HuddyConfig {
   character?: string;
   name?: string;
   color?: string;
-  plan?: Plan;
   hudEnabled: boolean;
-  hudElements: {
-    context: boolean;
-    cost: boolean;
-    rateLimit: boolean;
-  };
 }
 
 // ── Transcript 파싱 결과 ──

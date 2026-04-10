@@ -5,7 +5,6 @@ import type { CharacterDef } from '../types.js';
 export const ghost: CharacterDef = {
   species: 'ghost',
   displayName: 'Boo',
-  rarity: 'Uncommon',
   colorDefault: 'white',
 
   frames: {

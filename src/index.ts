@@ -40,7 +40,6 @@ async function statuslineMode(): Promise<void> {
   // HUD 데이터 조립
   const hudData: HUDData = {
     contextPercent: input.context_window?.used_percentage ?? null,
-    costUsd: input.cost?.total_cost_usd ?? null,
     rateLimit5h: input.rate_limits?.five_hour
       ? {
           percent: input.rate_limits.five_hour.used_percentage ?? 0,
@@ -114,7 +113,7 @@ function handleCli(args: string[]): void {
           break;
         }
         const config = updateConfig('character', filter);
-        console.log(`✓ ${found.displayName} (${found.rarity}) 선택!`);
+        console.log(`✓ ${found.displayName} 선택!`);
         console.log(renderCharacterPreview(found));
         break;
       }
@@ -129,6 +128,25 @@ function handleCli(args: string[]): void {
       }
       console.log(`사용법: huddy select <species>`);
       console.log(`예시: huddy select cat`);
+      break;
+    }
+
+    case 'random': {
+      // 전체 캐릭터 중 랜덤 선택
+      const picked = characters[Math.floor(Math.random() * characters.length)];
+
+      // 10% 확률로 무지개, 나머지는 색상 랜덤
+      const COLORS = ['red', 'green', 'yellow', 'blue', 'magenta', 'cyan', 'white'];
+      const isRainbow = Math.random() < 0.2;
+      const color = isRainbow ? 'rainbow' : COLORS[Math.floor(Math.random() * COLORS.length)];
+
+      // config에 저장
+      let config = updateConfig('character', picked.species);
+      config = updateConfig('color', color);
+
+      const colorLabel = isRainbow ? '🌈 RAINBOW' : color;
+      console.log(`✦ ${picked.displayName} + ${colorLabel} 뽑음!`);
+      console.log(renderCharacterPreview(picked, color));
       break;
     }
 
@@ -148,6 +166,7 @@ function handleCli(args: string[]): void {
       console.log('  huddy select <name>  Directly select a character');
       console.log('  huddy config show    Show current configuration');
       console.log('  huddy config set     Update a setting');
+      console.log('  huddy random         Random character + color (10% rainbow!)');
       console.log('  huddy info           Show buddy info and stats');
       break;
   }

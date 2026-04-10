@@ -2,12 +2,6 @@ import type { BuddyInstance, CharacterDef, RPGStats, HuddyConfig } from './types
 import { characters } from './characters/index.js';
 import { mulberry32, hashString, randInt } from './prng.js';
 
-/** 희귀도별 누적 확률 (Common 85%, Uncommon 95%, Rare 100%) */
-const RARITY_THRESHOLDS = [
-  { rarity: 'Common' as const, cumulative: 0.85 },
-  { rarity: 'Uncommon' as const, cumulative: 0.95 },
-  { rarity: 'Rare' as const, cumulative: 1.0 },
-];
 
 /** session_id 기반으로 캐릭터 + 스탯 결정 (재현 가능) */
 export function resolveBuddy(sessionId: string, config: HuddyConfig): BuddyInstance {
@@ -37,13 +31,9 @@ export function resolveBuddy(sessionId: string, config: HuddyConfig): BuddyInsta
   }
 }
 
-/** PRNG로 희귀도 → 캐릭터 선택 */
+/** PRNG로 전체 캐릭터 중 랜덤 선택 */
 function pickCharacter(rng: () => number): CharacterDef {
-  const roll = rng();
-  const rarity = RARITY_THRESHOLDS.find((t) => roll < t.cumulative)?.rarity ?? 'Common';
-  const pool = characters.filter((c) => c.rarity === rarity);
-  if (pool.length === 0) return characters[0];
-  return pool[Math.floor(rng() * pool.length)];
+  return characters[Math.floor(rng() * characters.length)];
 }
 
 /** PRNG로 RPG 스탯 생성 (각 0~100) */
