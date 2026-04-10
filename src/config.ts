@@ -50,6 +50,9 @@ export function updateConfig(key: string, value: string): HuddyConfig {
     case 'hud':
       config.hudEnabled = value !== 'off' && value !== 'false';
       break;
+    case 'plan':
+      config.plan = value as import('./types.js').Plan;
+      break;
     default:
       throw new Error(`Unknown config key: ${key}`);
   }

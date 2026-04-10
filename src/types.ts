@@ -71,10 +71,13 @@ export interface HUDData {
 }
 
 // ── 설정 ──
+export type Plan = 'pro' | 'max' | 'team' | 'enterprise' | 'free';
+
 export interface HuddyConfig {
   character?: string;
   name?: string;
   color?: string;
+  plan?: Plan;
   hudEnabled: boolean;
   hudElements: {
     context: boolean;
