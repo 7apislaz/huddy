@@ -16,10 +16,9 @@ Your coding buddy lives in the Claude Code statusline — reacting to your conte
 ## Features
 
 - **10 Characters** — Duck, Cat, Blob, Penguin, Rabbit, Owl, Octopus, Ghost, Dragon, Axolotl
-- **Rarity System** — Common / Uncommon / Rare
 - **4 Emotions** — idle, happy (success), sad (error), tired (high context%)
-- **RPG Stats** — Debugging, Patience, Chaos, Wisdom, Snark
-- **HUD (optional)** — Context %, cost, rate limits on the statusline
+- **HUD** — Context %, rate limits, session duration with color coding
+- **Random roll** — `huddy random` picks a character + color, 20% chance for rainbow
 - **Customization** — Pick your buddy, name, color
 - **Zero dependencies** — Only 13KB, no external packages
 
@@ -53,27 +52,40 @@ huddy setup
 
 ## Usage
 
-### Pick your buddy
+### Commands
 
 ```bash
-huddy select           # Browse all 10 characters
-huddy select cat       # Pick a specific character
+huddy setup                # Register with Claude Code statusline
+huddy select               # Browse all 10 characters
+huddy select cat           # Pick a specific character
+huddy random               # Random character + color (20% rainbow!)
+huddy info                 # Show buddy info and stats
+huddy config show          # View current settings
+huddy config set character owl     # Change character
+huddy config set name "Hootie"     # Rename your buddy
+huddy config set color cyan        # Change color
+huddy config set hud off           # Hide HUD
 ```
+
+Settings are saved in `~/.huddy/config.json`.
 
 ### Claude Code Slash Commands
 
-If you copy the command files to `~/.claude/commands/`:
+After `huddy setup`, copy the command files to get slash commands in Claude Code:
+
+```bash
+mkdir -p ~/.claude/commands
+cp node_modules/huddy/docs/commands/*.md ~/.claude/commands/
+# or if installed globally:
+cp $(npm root -g)/huddy/docs/commands/*.md ~/.claude/commands/
+```
+
+Then use directly in Claude Code:
 
 ```
 /huddy          — Register buddy on statusline
 /huddy-select   — Pick your character
-```
-
-Setup slash commands:
-
-```bash
-mkdir -p ~/.claude/commands
-cp docs/commands/*.md ~/.claude/commands/
+/huddy-random   — Random roll (20% rainbow!)
 ```
 
 ### Use with OMC HUD (or other statusline tools)
@@ -96,35 +108,12 @@ Then update `~/.claude/settings.json`:
 }
 ```
 
-The wrapper runs huddy first (buddy + optional HUD), then your existing statusline tool. If huddy is not installed, it silently falls back to the existing tool only.
-
 Toggle huddy's HUD line independently:
 
 ```bash
 huddy config set hud off   # Show buddy only, keep OMC HUD
 huddy config set hud on    # Show buddy + huddy HUD + OMC HUD
 ```
-
-### Set your plan
-
-```bash
-huddy config set plan pro   # Pro / Max / Team / Enterprise / Free
-```
-
-This shows `[Pro]` or `[Max]` on the HUD and displays rate limits as **remaining** usage.
-
-### Configuration
-
-```bash
-huddy config show                  # View current settings
-huddy config set character owl     # Change character
-huddy config set name "Hootie"     # Rename your buddy
-huddy config set color cyan        # Change color
-huddy config set hud off           # Hide HUD
-huddy info                         # Show buddy stats
-```
-
-Settings are saved in `~/.huddy/config.json`.
 
 ## How It Works
 
@@ -139,6 +128,14 @@ huddy → parse context% / transcript → determine emotion
 Claude Code → display on statusline
 ```
 
+### HUD Display
+
+The HUD shows usage with color coding (green → yellow → red):
+
+```
+ctx: 45% | 5h: 12% (3h20m) | 7d: 8% | session: 42m
+```
+
 ### Emotion Triggers
 
 | Emotion | Trigger | Visual |
@@ -150,18 +147,18 @@ Claude Code → display on statusline
 
 ## Characters
 
-| Character | Rarity | Signature |
-|-----------|--------|-----------|
-| 🦆 Duck (Quacky) | Common | `__(° >` beak + tail |
-| 🐱 Cat (Whiskers) | Common | `/\_/\` ears + `ω` mouth |
-| 🟢 Blob (Blobby) | Common | `.----.` breathing animation |
-| 🐧 Penguin (Waddle) | Common | `.---.` round body + `><` flippers |
-| 🐰 Rabbit (Bun) | Common | `(\ /)` long ears |
-| 🦉 Owl (Hoot) | Uncommon | `(( °° ))` big eyes |
-| 🐙 Octopus (Inky) | Uncommon | `/\/\/\/\` tentacles |
-| 👻 Ghost (Boo) | Uncommon | `` ~`~ ~`~ `` wavy bottom |
-| 🐉 Dragon (Ember) | Rare | `/^\` horns + `>>~` fire |
-| 🦎 Axolotl (Axie) | Rare | `}~{ ` gills |
+| Character | Signature |
+|-----------|-----------|
+| 🦆 Duck (Quacky) | `__(° >` beak + tail |
+| 🐱 Cat (Whiskers) | `/\_/\` ears + `ω` mouth |
+| 🟢 Blob (Blobby) | `.----.` breathing animation |
+| 🐧 Penguin (Waddle) | `.---.` round body + `><` flippers |
+| 🐰 Rabbit (Bun) | `(\ /)` long ears |
+| 🦉 Owl (Hoot) | `(( °° ))` big eyes |
+| 🐙 Octopus (Inky) | `/\/\/\/\` tentacles |
+| 👻 Ghost (Boo) | `` ~`~ ~`~ `` wavy bottom |
+| 🐉 Dragon (Ember) | `/^\` horns + `>>~` fire |
+| 🦎 Axolotl (Axie) | `}~{` gills |
 
 ## Roadmap
 
