@@ -8,7 +8,7 @@ const CONFIG_PATH = join(CONFIG_DIR, 'config.json');
 
 const DEFAULT_CONFIG: HuddyConfig = {
   hudEnabled: true,
-  lang: 'ko',
+  lang: 'en',
 };
 
 /** ~/.huddy/config.json 로드. 없으면 기본값 반환. */
