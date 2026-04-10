@@ -1,11 +1,15 @@
 import type { HUDData, HuddyConfig } from './types.js';
-import { dim, green, yellow, red } from './color.js';
+import { dim, green, yellow, red, cyan } from './color.js';
+import { VERSION } from './version.js';
 
 /** HUD 한 줄 렌더링 — 잔량 중심 색상 표시 */
 export function renderHUD(data: HUDData, config: HuddyConfig): string {
   if (!config.hudEnabled) return '';
 
   const parts: string[] = [];
+
+  // 버전 표시
+  parts.push(cyan(`huddy#${VERSION}`));
 
   // 컨텍스트 사용량 — 많이 쓸수록 빨강
   if (data.contextPercent !== null) {
