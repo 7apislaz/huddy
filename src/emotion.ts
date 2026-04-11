@@ -1,26 +1,18 @@
 // 감정 결정 엔진
-// 컨텍스트 사용률과 최근 트랜스크립트 이벤트를 기반으로 감정 상태 결정
+// 컨텍스트 사용률, 최근 트랜스크립트 이벤트, 지속 상태를 기반으로 감정 결정
 
-import type { EmotionState, TranscriptEvent } from './types.js';
+import type { EmotionState, TranscriptEvent, BuddyState } from './types.js';
 
 // 최근 이벤트 판단 기준: 3분(180,000ms)
 const RECENT_WINDOW_MS = 180_000;
+// 재회 감지: 6시간 이상 미접속
+const REUNION_THRESHOLD_MS = 6 * 3_600_000;
 
-/**
- * idle 감정 상태 기본값
- * 에러 발생 시 또는 조건 미충족 시 반환
- */
 function idleState(): EmotionState {
   return { type: 'idle', intensity: 0.3, trigger: 'idle' };
 }
 
-/**
- * 현재 시각 기준 최근 N밀리초 이내의 이벤트만 필터링
- */
-function recentEvents(
-  events: TranscriptEvent[],
-  windowMs: number,
-): TranscriptEvent[] {
+function recentEvents(events: TranscriptEvent[], windowMs: number): TranscriptEvent[] {
   const now = Date.now();
   return events.filter((e) => now - e.timestamp <= windowMs);
 }
@@ -28,24 +20,24 @@ function recentEvents(
 /**
  * 감정 결정 엔진 — 우선순위 기반
  *
- * 우선순위 (높은 것이 먼저):
  * 1. contextPercent >= 80 → tired (intensity 0.8+)
  * 2. contextPercent >= 60 → tired (intensity 0.6)
- * 3. 최근 3분 내 error 이벤트 존재 → sad
- *    - 에러 3개 이상이면 intensity 0.9, 그 외 0.7
- * 4. 최근 3분 내 success 이벤트 존재 → happy (intensity 0.7)
- * 5. 그 외 → idle (intensity 0.3)
+ * 3. 재회 (6h+ 미접속 + happiness >= 30) → happy
+ * 4. 연속 에러 5회 이상 또는 최근 에러 → sad
+ * 5. 연속 성공 5회 이상 또는 최근 성공 → happy
+ * 6. 행복도 < 25 → sad (누적된 피로)
+ * 7. 기본 → idle
  *
- * 절대 throw 하지 않음 — 에러 시 idle 반환
+ * state는 optional — 없으면 이벤트 기반으로만 동작 (하위 호환)
  */
 export function resolveEmotion(
   contextPercent: number,
   events: TranscriptEvent[],
+  state?: BuddyState,
 ): EmotionState {
   try {
-    // ── 1순위: 컨텍스트 80% 이상 → 매우 지침 ──
+    // ── 1순위: 컨텍스트 80% 이상 ──
     if (contextPercent >= 80) {
-      // 80~100% 범위를 0.8~1.0으로 선형 보간
       const intensity = Math.min(1.0, 0.8 + (contextPercent - 80) / 100);
       return {
         type: 'tired',
@@ -54,44 +46,58 @@ export function resolveEmotion(
       };
     }
 
-    // ── 2순위: 컨텍스트 60% 이상 → 지침 ──
+    // ── 2순위: 컨텍스트 60% 이상 ──
     if (contextPercent >= 60) {
-      return {
-        type: 'tired',
-        intensity: 0.6,
-        trigger: 'context>=60%',
-      };
+      return { type: 'tired', intensity: 0.6, trigger: 'context>=60%' };
     }
 
-    // 최근 3분 이내 이벤트만 추출
     const recent = recentEvents(events, RECENT_WINDOW_MS);
 
-    // ── 3순위: 최근 에러 이벤트 → 슬픔 ──
+    // ── 3순위: 재회 감지 ──
+    if (state) {
+      const timeSinceLastSeen = Date.now() - state.lastSeenAt;
+      if (timeSinceLastSeen >= REUNION_THRESHOLD_MS && state.happiness >= 30) {
+        return { type: 'happy', intensity: 0.9, trigger: 'reunion' };
+      }
+    }
+
+    // ── 4순위: 에러 ──
     const errorEvents = recent.filter((e) => e.type === 'error');
-    if (errorEvents.length > 0) {
-      // 에러 3개 이상이면 더 강한 슬픔
-      const intensity = errorEvents.length >= 3 ? 0.9 : 0.7;
+    const totalConsecErrors = state
+      ? Math.max(errorEvents.length, state.consecutiveErrors)
+      : errorEvents.length;
+
+    if (totalConsecErrors > 0) {
+      const intensity = totalConsecErrors >= 5 ? 1.0 : totalConsecErrors >= 3 ? 0.9 : 0.7;
       return {
         type: 'sad',
         intensity,
-        trigger: `error x${errorEvents.length}`,
+        trigger: `error x${totalConsecErrors}`,
       };
     }
 
-    // ── 4순위: 최근 성공 이벤트 → 기쁨 ──
+    // ── 5순위: 성공 ──
     const successEvents = recent.filter((e) => e.type === 'success');
-    if (successEvents.length > 0) {
+    const totalConsecSuccesses = state
+      ? Math.max(successEvents.length, state.consecutiveSuccesses)
+      : successEvents.length;
+
+    if (totalConsecSuccesses > 0) {
+      const intensity = totalConsecSuccesses >= 5 ? 1.0 : 0.7;
       return {
         type: 'happy',
-        intensity: 0.7,
-        trigger: `success x${successEvents.length}`,
+        intensity,
+        trigger: `success x${totalConsecSuccesses}`,
       };
     }
 
-    // ── 5순위: 기본 → 대기 ──
+    // ── 6순위: 낮은 행복도 ──
+    if (state && state.happiness < 25) {
+      return { type: 'sad', intensity: 0.5, trigger: 'low-happiness' };
+    }
+
     return idleState();
   } catch {
-    // 예외 발생 시 안전하게 idle 반환
     return idleState();
   }
 }

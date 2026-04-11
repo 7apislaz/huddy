@@ -81,3 +81,13 @@ export interface TranscriptEvent {
   timestamp: number; // unix ms
   detail: string;
 }
+
+// ── 타마고치 지속 상태 ──
+export interface BuddyState {
+  happiness: number;           // 0–100
+  consecutiveErrors: number;
+  consecutiveSuccesses: number;
+  lastSeenAt: number;          // unix ms — 재회 감지용
+  lastProcessedAt: number;     // 마지막으로 처리한 이벤트 타임스탬프 (중복 방지)
+  totalSessions: number;
+}

@@ -1,11 +1,16 @@
 import { describe, it, expect } from 'vitest';
 import { resolveEmotion } from '../src/emotion.js';
-import type { TranscriptEvent } from '../src/types.js';
+import type { BuddyState, TranscriptEvent } from '../src/types.js';
+import { DEFAULT_STATE } from '../src/state.js';
 
 const now = Date.now();
 
 function makeEvent(type: TranscriptEvent['type'], minsAgo = 1): TranscriptEvent {
   return { type, timestamp: now - minsAgo * 60_000, detail: '' };
+}
+
+function makeState(overrides: Partial<BuddyState> = {}): BuddyState {
+  return { ...DEFAULT_STATE, lastSeenAt: now, ...overrides };
 }
 
 describe('resolveEmotion', () => {
@@ -76,6 +81,66 @@ describe('resolveEmotion', () => {
     it('returns idle at 59% context', () => {
       const e = resolveEmotion(59, []);
       expect(e.type).toBe('idle');
+    });
+  });
+});
+
+describe('resolveEmotion — state-based triggers', () => {
+  describe('reunion', () => {
+    it('returns happy after 6h+ absence with good mood', () => {
+      const state = makeState({
+        happiness: 70,
+        lastSeenAt: now - 7 * 3_600_000,
+      });
+      const e = resolveEmotion(0, [], state);
+      expect(e.type).toBe('happy');
+      expect(e.trigger).toBe('reunion');
+    });
+
+    it('does not trigger reunion if happiness < 30', () => {
+      const state = makeState({
+        happiness: 20,
+        lastSeenAt: now - 7 * 3_600_000,
+      });
+      const e = resolveEmotion(0, [], state);
+      expect(e.trigger).not.toBe('reunion');
+    });
+
+    it('does not trigger reunion if seen recently', () => {
+      const state = makeState({ happiness: 70, lastSeenAt: now - 3_600_000 });
+      const e = resolveEmotion(0, [], state);
+      expect(e.trigger).not.toBe('reunion');
+    });
+  });
+
+  describe('consecutive events', () => {
+    it('higher intensity with 5+ consecutive successes', () => {
+      const state = makeState({ consecutiveSuccesses: 5 });
+      const e = resolveEmotion(0, [], state);
+      expect(e.type).toBe('happy');
+      expect(e.intensity).toBe(1.0);
+    });
+
+    it('max intensity with 5+ consecutive errors', () => {
+      const state = makeState({ consecutiveErrors: 5 });
+      const e = resolveEmotion(0, [], state);
+      expect(e.type).toBe('sad');
+      expect(e.intensity).toBe(1.0);
+    });
+  });
+
+  describe('low happiness', () => {
+    it('returns sad when happiness < 25 and no other triggers', () => {
+      const state = makeState({ happiness: 15 });
+      const e = resolveEmotion(0, [], state);
+      expect(e.type).toBe('sad');
+      expect(e.trigger).toBe('low-happiness');
+    });
+
+    it('tired still overrides low happiness', () => {
+      const state = makeState({ happiness: 10 });
+      const e = resolveEmotion(65, [], state);
+      expect(e.type).toBe('tired');
     });
   });
 });

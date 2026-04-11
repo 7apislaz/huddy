@@ -7,6 +7,8 @@ import { renderBuddy, renderBuddyInfo, renderCharacterPreview } from './render.j
 import { renderHUD } from './hud.js';
 import { setupStatusline, updateConfig } from './config.js';
 import { characters } from './characters/index.js';
+import { loadPluginCharacters } from './plugin.js';
+import { loadState, saveState, updateState } from './state.js';
 import { t } from './i18n.js';
 import { statSync } from 'node:fs';
 import type { HUDData } from './types.js';
@@ -33,7 +35,13 @@ async function statuslineMode(): Promise<void> {
   // 감정 결정
   const contextPercent = stabilizeContextPercent(input.context_window?.used_percentage);
   const events = input.transcript_path ? parseTranscript(input.transcript_path) : [];
-  const emotion = resolveEmotion(contextPercent, events);
+
+  // 지속 상태 로드 → 업데이트 → 저장
+  const prevState = loadState();
+  const state = updateState(prevState, events);
+  saveState(state);
+
+  const emotion = resolveEmotion(contextPercent, events, state);
 
   // 렌더링
   const buddyArt = renderBuddy(buddy, emotion);
@@ -172,6 +180,12 @@ function handleCli(args: string[]): void {
 /** 메인 진입점 */
 export async function main(): Promise<void> {
   try {
+    // 플러그인 캐릭터 로드 (빌트인 배열에 병합)
+    const pluginChars = loadPluginCharacters();
+    if (pluginChars.length > 0) {
+      characters.push(...pluginChars);
+    }
+
     const args = process.argv.slice(2);
 
     // CLI 서브커맨드가 있으면 CLI 모드

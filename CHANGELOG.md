@@ -5,6 +5,15 @@ All notable changes to huddy will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [0.2.0] - 2026-04-12
+
+### Added
+- **Tamagotchi persistence** — happiness, consecutive error/success counters saved in `~/.huddy/state.json` across sessions
+- **Reunion detection** — happy reaction when returning after 6+ hours away
+- **State-based emotion triggers** — low happiness (<25) → sad, 5+ consecutive successes → high-intensity happy, 5+ consecutive errors → max-intensity sad
+- **Custom character plugin** — add characters via `~/.huddy/characters/*.json`
+- Duplicate event prevention (`lastProcessedAt` tracking)
+
 ## [0.1.0] - 2026-04-12
 
 ### Added
