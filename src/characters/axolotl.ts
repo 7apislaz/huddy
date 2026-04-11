@@ -12,7 +12,7 @@ export const axolotl: CharacterDef = {
     idle: [
       {
         lines: [
-          '}~ .----. ~{',
+          '}~ .----. {',
           ' ( °  ° )  ',
           '  ( ω  )   ',
           ' /`----´\\  ',
@@ -21,7 +21,7 @@ export const axolotl: CharacterDef = {
       },
       {
         lines: [
-          '}~~ .---.~{ ',
+          '}~~ .---. { ',
           ' ( °  ° )  ',
           '  ( ω  )   ',
           ' /`----´\\  ',
@@ -30,7 +30,7 @@ export const axolotl: CharacterDef = {
       },
       {
         lines: [
-          '}~ .----. ~{',
+          '}~ .----. {',
           ' ( °  ° )  ',
           '  ( ω  )   ',
           ' /`----´\\  ',
@@ -40,7 +40,7 @@ export const axolotl: CharacterDef = {
       // blink
       {
         lines: [
-          '}~ .----. ~{',
+          '}~ .----. {',
           ' ( —  — )  ',
           '  ( ω  )   ',
           ' /`----´\\  ',
@@ -53,7 +53,7 @@ export const axolotl: CharacterDef = {
     happy: [
       {
         lines: [
-          '}~~.----.~~{',
+          '}~~.----.~{',
           ' ( ^  ^ )  ',
           '  ( ▽▽ ) ♪ ',
           ' /`----´\\  ',
@@ -62,7 +62,7 @@ export const axolotl: CharacterDef = {
       },
       {
         lines: [
-          '}~~.----. ~{',
+          '}~~.----. {',
           ' ( ^  ^ )  ',
           ' ♪( ▽▽ )   ',
           ' /`----´\\  ',
@@ -71,7 +71,7 @@ export const axolotl: CharacterDef = {
       },
       {
         lines: [
-          '}~~.----.~~{',
+          '}~~.----.~{',
           ' ( ^  ^ ) ✦',
           '  ( ▽▽ )   ',
           ' /`----´\\  ',
@@ -81,7 +81,7 @@ export const axolotl: CharacterDef = {
       // blink: 아가미 최대 활짝
       {
         lines: [
-          '}~~~.---.~~~{',
+          '}~~~.---.~~{',
           ' ( ✦  ✦ )  ',
           '  ( ▽▽ )   ',
           ' /`----´\\  ',
@@ -94,7 +94,7 @@ export const axolotl: CharacterDef = {
     sad: [
       {
         lines: [
-          'v~ .----. ~v',
+          'v~ .----. v',
           ' ( ;  ; )  ',
           '  ( ﹏﹏ )  ',
           ' /`----´\\ ,',
@@ -103,7 +103,7 @@ export const axolotl: CharacterDef = {
       },
       {
         lines: [
-          'v~ .----.~v ',
+          'v~ .----. v ',
           ' ( ;  ; )  ',
           '  ( ﹏﹏ ) ,',
           ' /`----´\\  ',
@@ -112,7 +112,7 @@ export const axolotl: CharacterDef = {
       },
       {
         lines: [
-          'v~~ .---.~v ',
+          'v~~ .---. v ',
           ' ( ;. ; )  ',
           '  (﹏﹏﹏)  ',
           ' /`----´\\ ,',
@@ -122,7 +122,7 @@ export const axolotl: CharacterDef = {
       // blink
       {
         lines: [
-          'v~ .----. ~v',
+          'v~ .----. v',
           ' ( ×  × )  ',
           '  ( ﹏﹏ )  ',
           ' /`----´\\  ',
@@ -135,7 +135,7 @@ export const axolotl: CharacterDef = {
     tired: [
       {
         lines: [
-          '}~ .----. ~{',
+          '}~ .----. {',
           ' ( —  — )  ',
           '  ( __  )  ',
           ' /`----´\\  ',
@@ -144,7 +144,7 @@ export const axolotl: CharacterDef = {
       },
       {
         lines: [
-          '}~ .----. ~{',
+          '}~ .----. {',
           ' ( —  — )  ',
           '  ( __ )  z',
           ' (`-----´) ',
@@ -153,7 +153,7 @@ export const axolotl: CharacterDef = {
       },
       {
         lines: [
-          '}~ .----.z~{',
+          '}~ .----.z{',
           ' ( =  = )  ',
           '  (~~~~)   ',
           ' (`-----´) ',

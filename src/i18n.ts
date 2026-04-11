@@ -53,6 +53,42 @@ const messages = {
     en: (name: string, color: string) => `✦ Got ${name} + ${color}!`,
   },
 
+  // feed
+  feed_done: {
+    ko: (gained: number, happiness: number) => `✦ 간식을 줬습니다! ♥ +${gained} → ${happiness}`,
+    en: (gained: number, happiness: number) => `✦ Snack time! ♥ +${gained} → ${happiness}`,
+  },
+  feed_full: {
+    ko: (happiness: number) => `✦ 이미 배부릅니다! (♥ ${happiness})`,
+    en: (happiness: number) => `✦ Already full! (♥ ${happiness})`,
+  },
+
+  // stats
+  stats_title: {
+    ko: (name: string) => `✦ ${name} 통계`,
+    en: (name: string) => `✦ ${name} stats`,
+  },
+  stats_sessions: {
+    ko: (n: number) => `  세션:      ${n}`,
+    en: (n: number) => `  Sessions:  ${n}`,
+  },
+  stats_happiness: {
+    ko: (bar: string, n: number) => `  행복도:    ${bar} ${n}`,
+    en: (bar: string, n: number) => `  Happiness: ${bar} ${n}`,
+  },
+  stats_successes: {
+    ko: (n: number) => `  성공:      ${n}`,
+    en: (n: number) => `  Successes: ${n}`,
+  },
+  stats_errors: {
+    ko: (n: number) => `  에러:      ${n}`,
+    en: (n: number) => `  Errors:    ${n}`,
+  },
+  stats_first_seen: {
+    ko: (s: string) => `  첫 등록:   ${s}`,
+    en: (s: string) => `  Since:     ${s}`,
+  },
+
   // help
   help_title: {
     ko: 'huddy v0.1.0 — Claude Code용 Tamagotchi CLI 버디',
@@ -89,6 +125,14 @@ const messages = {
   help_info: {
     ko: '  huddy info           버디 정보 보기',
     en: '  huddy info           Show buddy info and stats',
+  },
+  help_feed: {
+    ko: '  huddy feed           간식 주기 (♥ +15)',
+    en: '  huddy feed           Give a snack (♥ +15)',
+  },
+  help_stats: {
+    ko: '  huddy stats          누적 통계 보기',
+    en: '  huddy stats          Show lifetime stats',
   },
 } as const;
 

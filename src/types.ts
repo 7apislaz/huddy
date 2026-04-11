@@ -64,6 +64,7 @@ export interface HUDData {
   rateLimit5h: { percent: number; resetsAt: Date | null } | null;
   rateLimit7d: { percent: number; resetsAt: Date | null } | null;
   sessionDurationMs: number;
+  happiness: number | null;
 }
 
 // ── 설정 ──
@@ -90,4 +91,7 @@ export interface BuddyState {
   lastSeenAt: number;          // unix ms — 재회 감지용
   lastProcessedAt: number;     // 마지막으로 처리한 이벤트 타임스탬프 (중복 방지)
   totalSessions: number;
+  totalErrors: number;
+  totalSuccesses: number;
+  firstSeenAt: number;         // unix ms — 첫 등록일
 }

@@ -1,6 +1,7 @@
-import { readFileSync, writeFileSync, mkdirSync, existsSync } from 'node:fs';
+import { readFileSync, writeFileSync, mkdirSync, existsSync, readdirSync, copyFileSync } from 'node:fs';
 import { join } from 'node:path';
 import { homedir } from 'node:os';
+import { fileURLToPath } from 'node:url';
 import type { HuddyConfig } from './types.js';
 
 const CONFIG_DIR = join(homedir(), '.huddy');
@@ -82,4 +83,23 @@ export function setupStatusline(): void {
 
   mkdirSync(claudeDir, { recursive: true });
   writeFileSync(settingsPath, JSON.stringify(settings, null, 2) + '\n', 'utf8');
+
+  // 슬래시 커맨드 설치
+  installSlashCommands(claudeDir);
+}
+
+/** ~/.claude/commands/에 huddy 슬래시 커맨드 설치 */
+function installSlashCommands(claudeDir: string): void {
+  const commandsDir = join(claudeDir, 'commands');
+  mkdirSync(commandsDir, { recursive: true });
+
+  // 패키지의 docs/commands 디렉토리 경로 (dist/config.js 기준 ../docs/commands)
+  const srcDir = fileURLToPath(new URL('../docs/commands', import.meta.url));
+
+  if (!existsSync(srcDir)) return;
+
+  for (const file of readdirSync(srcDir)) {
+    if (!file.endsWith('.md')) continue;
+    copyFileSync(join(srcDir, file), join(commandsDir, file));
+  }
 }

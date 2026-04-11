@@ -1,51 +1,56 @@
 import type { HUDData, HuddyConfig } from './types.js';
-import { dim, green, yellow, red, cyan } from './color.js';
+import { dim, green, yellow, red, cyan, magenta } from './color.js';
 import { VERSION } from './version.js';
 
-/** HUD 한 줄 렌더링 — 잔량 중심 색상 표시 */
-export function renderHUD(data: HUDData, config: HuddyConfig): string {
-  if (!config.hudEnabled) return '';
+/** HUD 정보를 줄 목록으로 반환 (우측 패널 side-by-side 렌더링용) */
+export function buildHUDLines(data: HUDData, config: HuddyConfig): string[] {
+  if (!config.hudEnabled) return [];
+  const lines: string[] = [];
 
-  const parts: string[] = [];
+  lines.push(cyan(`huddy#${VERSION}`));
 
-  // 버전 표시
-  parts.push(cyan(`huddy#${VERSION}`));
-
-  // 컨텍스트 사용량 — 많이 쓸수록 빨강
   if (data.contextPercent !== null) {
     const used = Math.round(data.contextPercent);
     const colorFn = used >= 85 ? red : used >= 70 ? yellow : green;
-    parts.push(dim('ctx:') + colorFn(`${used}%`));
+    lines.push(dim('ctx:') + colorFn(`${used}%`));
   }
 
-  // Rate limit (5h) — 사용량 기준 색상
   if (data.rateLimit5h) {
     const used = Math.round(data.rateLimit5h.percent * 10) / 10;
     const colorFn = used >= 85 ? red : used >= 70 ? yellow : green;
     const resetStr = data.rateLimit5h.resetsAt
       ? dim(` (${formatRelativeTime(data.rateLimit5h.resetsAt)})`)
       : '';
-    parts.push(dim('5h:') + colorFn(`${used}%`) + resetStr);
+    lines.push(dim('5h:') + colorFn(`${used}%`) + resetStr);
   }
 
-  // Rate limit (7d) — 사용량 기준 색상
   if (data.rateLimit7d) {
     const used = Math.round(data.rateLimit7d.percent * 10) / 10;
     const colorFn = used >= 85 ? red : used >= 70 ? yellow : green;
     const resetStr = data.rateLimit7d.resetsAt
       ? dim(` (${formatRelativeTime(data.rateLimit7d.resetsAt)})`)
       : '';
-    parts.push(dim('7d:') + colorFn(`${used}%`) + resetStr);
+    lines.push(dim('7d:') + colorFn(`${used}%`) + resetStr);
   }
 
-  // 세션 지속 시간
   if (data.sessionDurationMs > 0) {
-    parts.push(dim('session:') + green(formatDuration(data.sessionDurationMs)));
+    lines.push(dim('session:') + green(formatDuration(data.sessionDurationMs)));
   }
 
-  if (parts.length === 0) return '';
-  const separator = dim(' | ');
-  return parts.join(separator);
+  if (data.happiness !== null) {
+    const h = Math.round(data.happiness);
+    const colorFn = h >= 70 ? green : h >= 40 ? yellow : red;
+    lines.push(magenta('♥') + colorFn(`${h}`));
+  }
+
+  return lines;
+}
+
+/** HUD 한 줄 렌더링 (구형 호환용 — | 구분자로 join) */
+export function renderHUD(data: HUDData, config: HuddyConfig): string {
+  const lines = buildHUDLines(data, config);
+  if (lines.length === 0) return '';
+  return lines.join(dim(' | '));
 }
 
 /** 리셋 시간까지 남은 시간 (상대 표현) */

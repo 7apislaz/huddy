@@ -3,8 +3,8 @@ import { loadConfig } from './config.js';
 import { resolveBuddy } from './buddy.js';
 import { resolveEmotion } from './emotion.js';
 import { parseTranscript } from './transcript.js';
-import { renderBuddy, renderBuddyInfo, renderCharacterPreview } from './render.js';
-import { renderHUD } from './hud.js';
+import { renderBuddy, renderBuddyInfo, renderCharacterPreview, renderSideBySide } from './render.js';
+import { buildHUDLines } from './hud.js';
 import { setupStatusline, updateConfig } from './config.js';
 import { characters } from './characters/index.js';
 import { loadPluginCharacters } from './plugin.js';
@@ -21,6 +21,12 @@ const FALLBACK_ASCII = [
   '  / | \\  ',
   ' ~~~~~~  ',
 ].join('\n');
+
+/** 행복도 바 렌더링 (10칸) */
+function happinessBar(happiness: number): string {
+  const filled = Math.round(Math.max(0, Math.min(100, happiness)) / 10);
+  return '█'.repeat(filled) + '░'.repeat(10 - filled);
+}
 
 /** statusline 모드: stdin JSON → ASCII+HUD → stdout */
 async function statuslineMode(): Promise<void> {
@@ -66,13 +72,17 @@ async function statuslineMode(): Promise<void> {
         }
       : null,
     sessionDurationMs: getSessionDuration(input.transcript_path),
+    happiness: state.happiness,
   };
 
-  const hudLine = renderHUD(hudData, config);
-
-  // stdout 출력
-  console.log(buddyArt);
-  if (hudLine) console.log(hudLine);
+  // stdout 출력 — 버디 아트 좌측 + HUD 정보 우측 side-by-side
+  const artLines = buddyArt.split('\n');
+  const hudLines = buildHUDLines(hudData, config);
+  if (hudLines.length > 0) {
+    console.log(renderSideBySide(artLines, hudLines));
+  } else {
+    console.log(buddyArt);
+  }
 }
 
 /** transcript_path의 birthtime으로 세션 지속 시간 추정 */
@@ -158,7 +168,58 @@ function handleCli(args: string[]): void {
     case 'info': {
       const config = loadConfig();
       const buddy = resolveBuddy('preview', config);
-      console.log(renderBuddyInfo(buddy));
+      const state = loadState();
+      const preview = renderCharacterPreview(buddy.character, buddy.color);
+      const [header, ...artLines] = preview.split('\n');
+      const bar = happinessBar(state.happiness);
+      const infoLines = [
+        `DBG:${buddy.stats.debugging} PAT:${buddy.stats.patience} CHS:${buddy.stats.chaos}`,
+        `WIS:${buddy.stats.wisdom} SNK:${buddy.stats.snark}`,
+        `♥ ${bar} ${state.happiness}`,
+      ];
+      console.log(header);
+      console.log(renderSideBySide(artLines, infoLines));
+      break;
+    }
+
+    case 'feed': {
+      const state = loadState();
+      if (state.happiness >= 100) {
+        console.log(t('feed_full', lang)(state.happiness));
+      } else {
+        const gained = Math.min(15, 100 - state.happiness);
+        const newHappiness = state.happiness + gained;
+        saveState({ ...state, happiness: newHappiness });
+        console.log(t('feed_done', lang)(gained, newHappiness));
+        const config = loadConfig();
+        const buddy = resolveBuddy('preview', config);
+        console.log(renderCharacterPreview(buddy.character, buddy.color));
+      }
+      break;
+    }
+
+    case 'stats': {
+      const state = loadState();
+      const config = loadConfig();
+      const buddy = resolveBuddy('preview', config);
+      const preview = renderCharacterPreview(buddy.character, buddy.color);
+      const [header, ...artLines] = preview.split('\n');
+      const bar = happinessBar(state.happiness);
+      const statsLines: string[] = [
+        t('stats_sessions', lang)(state.totalSessions),
+        t('stats_happiness', lang)(bar, state.happiness),
+        t('stats_successes', lang)(state.totalSuccesses ?? 0),
+        t('stats_errors', lang)(state.totalErrors ?? 0),
+      ];
+      if (state.firstSeenAt > 0) {
+        const days = Math.floor((Date.now() - state.firstSeenAt) / 86_400_000);
+        const sinceStr = days === 0
+          ? (lang === 'ko' ? '오늘' : 'today')
+          : (lang === 'ko' ? `${days}일 전` : `${days}d ago`);
+        statsLines.push(t('stats_first_seen', lang)(sinceStr));
+      }
+      console.log(t('stats_title', lang)(buddy.name));
+      console.log(renderSideBySide(artLines, statsLines));
       break;
     }
 
@@ -173,6 +234,8 @@ function handleCli(args: string[]): void {
       console.log(t('help_config_show', lang));
       console.log(t('help_config_set', lang));
       console.log(t('help_info', lang));
+      console.log(t('help_feed', lang));
+      console.log(t('help_stats', lang));
       break;
   }
 }
