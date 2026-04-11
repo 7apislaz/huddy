@@ -2,9 +2,22 @@
 
 **Tamagotchi-style CLI companion for Claude Code**
 
+[![npm](https://img.shields.io/npm/v/huddy)](https://www.npmjs.com/package/huddy)
+[![CI](https://github.com/7apislaz/huddy/actions/workflows/ci.yml/badge.svg)](https://github.com/7apislaz/huddy/actions/workflows/ci.yml)
+[![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](LICENSE)
+
 Your coding buddy lives in the Claude Code statusline — reacting to your context usage, celebrating successes, and getting sleepy when things get heavy.
 
 ![huddy demo](docs/demo/demo.gif)
+
+---
+
+## Requirements
+
+- [Claude Code](https://claude.ai/code) installed
+- Node.js >= 18
+
+---
 
 ## Quick Start
 
@@ -13,7 +26,7 @@ npm i -g huddy
 huddy setup
 ```
 
-Restart Claude Code and your buddy appears on the statusline!
+Restart Claude Code — your buddy appears on the statusline!
 
 ---
 
@@ -48,7 +61,8 @@ Pick from 10 unique buddies:
 ```bash
 huddy setup
 ```
-Register huddy with Claude Code statusline. Restart Claude Code after running.
+
+Registers huddy as the Claude Code statusline provider. Restart Claude Code after running.
 
 ---
 
@@ -63,16 +77,16 @@ Available: `duck` `cat` `blob` `penguin` `rabbit` `owl` `octopus` `ghost` `drago
 
 ---
 
-### Random roll 🎲
+### Random roll
 
 ```bash
 huddy random
 ```
 
-Randomly picks a character + color. **20% chance for rainbow** 🌈 — every line gets a different color!
+Randomly picks a character + color. **20% chance for rainbow** — every line gets a different color!
 
 ```
-✦ Ember + 🌈 RAINBOW 뽑음!
+✦ Ember + 🌈 RAINBOW!
 ```
 
 ---
@@ -98,42 +112,24 @@ Settings are saved in `~/.huddy/config.json`.
 ### Buddy info
 
 ```bash
-huddy info     # Show current buddy name, stats
+huddy info     # Show current buddy name and stats
 ```
-
----
-
-## Slash Commands (Claude Code)
-
-Copy command files to `~/.claude/commands/` to use slash commands:
-
-```bash
-mkdir -p ~/.claude/commands
-cp $(npm root -g)/huddy/docs/commands/*.md ~/.claude/commands/
-```
-
-| Command | Description |
-|---------|-------------|
-| `/huddy` | Register buddy on statusline |
-| `/huddy-select` | Browse & pick character |
-| `/huddy-select cat` | Directly select a character |
-| `/huddy-random` | Random roll (20% rainbow!) |
-| `/huddy-lang ko` | Switch to Korean |
-| `/huddy-lang en` | Switch to English |
 
 ---
 
 ## HUD
 
-The HUD line shows usage stats with color coding:
+The HUD line shows live usage stats:
 
 ```
-ctx: 45% | 5h: 12% (3h20m) | 7d: 8% | session: 42m
+huddy#0.1.0 | ctx: 45% | 5h: 12% (3h20m) | 7d: 8% | session: 42m
 ```
 
-- **ctx** — context window usage (green → yellow at 70% → red at 85%)
-- **5h / 7d** — rate limit usage with time until reset
-- **session** — how long the current session has been running
+| Field | Description |
+|-------|-------------|
+| **ctx** | Context window usage — green → yellow at 70% → red at 85% |
+| **5h / 7d** | Rate limit usage with time until reset |
+| **session** | How long the current session has been running |
 
 Hide the HUD with `huddy config set hud off`.
 
@@ -163,12 +159,33 @@ Claude Code → display on statusline
 
 ---
 
-## Use with OMC HUD
+## Slash Commands (Claude Code)
+
+Copy command files to use slash commands inside Claude Code:
+
+```bash
+mkdir -p ~/.claude/commands
+cp $(npm root -g)/huddy/docs/commands/*.md ~/.claude/commands/
+```
+
+| Command | Description |
+|---------|-------------|
+| `/huddy` | Register buddy on statusline |
+| `/huddy-select` | Browse & pick character |
+| `/huddy-select cat` | Directly select a character |
+| `/huddy-random` | Random roll (20% rainbow!) |
+| `/huddy-lang ko` | Switch to Korean |
+| `/huddy-lang en` | Switch to English |
+
+---
+
+## Use with oh-my-claudecode
 
 Claude Code supports one statusline command. To run huddy alongside [oh-my-claudecode](https://github.com/7apislaz/oh-my-claudecode):
 
 ```bash
-cp docs/wrapper/huddy-wrapper.mjs ~/.claude/hud/
+mkdir -p ~/.claude/hud
+cp $(npm root -g)/huddy/docs/wrapper/huddy-wrapper.mjs ~/.claude/hud/
 ```
 
 Update `~/.claude/settings.json`:
@@ -193,6 +210,12 @@ npm install && npm run build
 npm link
 huddy setup
 ```
+
+---
+
+## Contributing
+
+See [CONTRIBUTING.md](CONTRIBUTING.md).
 
 ---
 
