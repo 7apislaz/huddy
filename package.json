@@ -26,8 +26,16 @@
     "companion",
     "ascii-art"
   ],
-  "author": "",
+  "author": "7apislaz",
   "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/7apislaz/huddy.git"
+  },
+  "homepage": "https://github.com/7apislaz/huddy#readme",
+  "bugs": {
+    "url": "https://github.com/7apislaz/huddy/issues"
+  },
   "engines": {
     "node": ">=18"
   },
