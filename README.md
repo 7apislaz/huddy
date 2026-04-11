@@ -4,6 +4,8 @@
 
 Your coding buddy lives in the Claude Code statusline — reacting to your context usage, celebrating successes, and getting sleepy when things get heavy.
 
+![huddy demo](docs/demo/demo.gif)
+
 ## Quick Start
 
 ```bash
