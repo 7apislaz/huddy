@@ -43,7 +43,7 @@ Pick from 10 unique buddies:
   Quacky       Whiskers     Blobby     Waddle       Bun
   (duck)        (cat)       (blob)    (penguin)   (rabbit)
 
-  /\  /\       .----.       .----.     /^\ ~    }~ .----. ~{
+  /\  /\       .----.       .----.     /^\ ~    }~ .----. {
  (( °° ))     ( ° ° )      ( ° ° )   ( °  ° )     ( °  ° )
   ( >< )       ( ω )        ( ω )     ( ~~ )       ( ω  )
   /|  |\      /\/\/\/\     (      )  /\/vvv\/\    /`----´\
@@ -109,20 +109,35 @@ Settings are saved in `~/.huddy/config.json`.
 
 ---
 
-### Buddy info
+### Buddy info & stats
 
 ```bash
-huddy info     # Show current buddy name and stats
+huddy info     # Show current buddy with RPG stats and happiness bar
+huddy stats    # Show lifetime stats (sessions, successes, errors, first seen)
 ```
+
+---
+
+### Feed your buddy
+
+```bash
+huddy feed     # Give a snack — happiness +15!
+```
+
+Happiness decays over time (−2/hr, max −20). Keep your buddy happy!
 
 ---
 
 ## HUD
 
-The HUD line shows live usage stats:
+Stats appear **to the right of the buddy art** on the statusline:
 
 ```
-huddy#0.1.0 | ctx: 45% | 5h: 12% (3h20m) | 7d: 8% | session: 42m
+}~ .----. {    huddy#0.2.1
+ ( °  ° )     ctx:45%
+  ( ω  )      5h:12% (3h20m)
+ /`----´\     session:42m
+ ~~  ~~~~     ♥85
 ```
 
 | Field | Description |
@@ -130,6 +145,7 @@ huddy#0.1.0 | ctx: 45% | 5h: 12% (3h20m) | 7d: 8% | session: 42m
 | **ctx** | Context window usage — green → yellow at 70% → red at 85% |
 | **5h / 7d** | Rate limit usage with time until reset |
 | **session** | How long the current session has been running |
+| **♥** | Buddy happiness (0–100) — green → yellow at 40 → red below |
 
 Hide the HUD with `huddy config set hud off`.
 
@@ -174,6 +190,7 @@ cp $(npm root -g)/@7apislaz/huddy/docs/commands/*.md ~/.claude/commands/
 | `/huddy-select` | Browse & pick character |
 | `/huddy-select cat` | Directly select a character |
 | `/huddy-random` | Random roll (20% rainbow!) |
+| `/huddy-feed` | Give your buddy a snack (happiness +15) |
 | `/huddy-lang ko` | Switch to Korean |
 | `/huddy-lang en` | Switch to English |
 
