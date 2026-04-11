@@ -20,20 +20,20 @@ Restart Claude Code and your buddy appears on the statusline!
 Pick from 10 unique buddies:
 
 ```
-    __         /\_/\       .----.      .---.      (\ /)
- __(° >        ( ° ° )    ( °  ° )    ( ° ° )    ( ° °)
-(  ._>  )       ( ω )     (  ω   )   >( ω )<     ( ω  )
+    __          /\_/\      .----.      .---.      (\ /)
+ __(° >        ( ° ° )    ( °  ° )    ( ° ° )     ( ° °)
+(  ._>  )       ( ω )     (  ω   )    >( ω )<     ( ω  )
  \__)--´        /| |\~     `----´      (___) ~    (  uu)~
-  ~~~~         (_)_(_)                  _|_|_       ~~~~
-  Quacky       Whiskers     Blobby      Waddle       Bun
-  (duck)        (cat)        (blob)    (penguin)   (rabbit)
+  ~~~~         (_)_(_)                 _|_|_       ~~~~
+  Quacky       Whiskers     Blobby     Waddle       Bun
+  (duck)        (cat)       (blob)    (penguin)   (rabbit)
 
-  /\  /\       .----.       .----.     /^\ ~     }~ .----. ~{
- (( °° ))     ( ° ° )      ( ° ° )   ( °  ° )    ( °  ° )
+  /\  /\       .----.       .----.     /^\ ~    }~ .----. ~{
+ (( °° ))     ( ° ° )      ( ° ° )   ( °  ° )     ( °  ° )
   ( >< )       ( ω )        ( ω )     ( ~~ )       ( ω  )
   /|  |\      /\/\/\/\     (      )  /\/vvv\/\    /`----´\
   \|__|/       ~~  ~~~    ~`~ ~`~ ~               ~~  ~~~~
-   Hoot         Inky         Boo       Ember         Axie
+   Hoot         Inky         Boo       Ember        Axie
    (owl)      (octopus)    (ghost)    (dragon)    (axolotl)
 ```
 
