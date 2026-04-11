@@ -2,7 +2,7 @@
 
 **Tamagotchi-style CLI companion for Claude Code**
 
-[![npm](https://img.shields.io/npm/v/huddy)](https://www.npmjs.com/package/huddy)
+[![npm](https://img.shields.io/npm/v/@7apislaz/huddy)](https://www.npmjs.com/package/@7apislaz/huddy)
 [![CI](https://github.com/7apislaz/huddy/actions/workflows/ci.yml/badge.svg)](https://github.com/7apislaz/huddy/actions/workflows/ci.yml)
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](LICENSE)
 
@@ -22,7 +22,7 @@ Your coding buddy lives in the Claude Code statusline — reacting to your conte
 ## Quick Start
 
 ```bash
-npm i -g huddy
+npm i -g @7apislaz/huddy
 huddy setup
 ```
 
@@ -165,7 +165,7 @@ Copy command files to use slash commands inside Claude Code:
 
 ```bash
 mkdir -p ~/.claude/commands
-cp $(npm root -g)/huddy/docs/commands/*.md ~/.claude/commands/
+cp $(npm root -g)/@7apislaz/huddy/docs/commands/*.md ~/.claude/commands/
 ```
 
 | Command | Description |
@@ -185,7 +185,7 @@ Claude Code supports one statusline command. To run huddy alongside [oh-my-claud
 
 ```bash
 mkdir -p ~/.claude/hud
-cp $(npm root -g)/huddy/docs/wrapper/huddy-wrapper.mjs ~/.claude/hud/
+cp $(npm root -g)/@7apislaz/huddy/docs/wrapper/huddy-wrapper.mjs ~/.claude/hud/
 ```
 
 Update `~/.claude/settings.json`:

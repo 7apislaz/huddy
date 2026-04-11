@@ -1,5 +1,5 @@
 {
-  "name": "huddy",
+  "name": "@7apislaz/huddy",
   "version": "0.1.0",
   "description": "Tamagotchi-style CLI companion for Claude Code — reactive buddy + optional HUD on the statusline",
   "type": "module",
