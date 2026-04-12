@@ -82,11 +82,18 @@ export function resolveEmotion(
       ? Math.max(successEvents.length, state.consecutiveSuccesses)
       : successEvents.length;
 
+    if (totalConsecSuccesses >= 5) {
+      return {
+        type: 'excited',
+        intensity: 1.0,
+        trigger: `success x${totalConsecSuccesses}`,
+      };
+    }
+
     if (totalConsecSuccesses > 0) {
-      const intensity = totalConsecSuccesses >= 5 ? 1.0 : 0.7;
       return {
         type: 'happy',
-        intensity,
+        intensity: 0.7,
         trigger: `success x${totalConsecSuccesses}`,
       };
     }

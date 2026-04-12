@@ -102,11 +102,15 @@ function handleCli(args: string[]): void {
   const lang = loadConfig().lang;
 
   switch (cmd) {
-    case 'setup':
+    case 'setup': {
       setupStatusline();
       console.log(t('setup_done', lang));
+      const setupConfig = loadConfig();
+      const setupBuddy = resolveBuddy('preview', setupConfig);
+      console.log(renderCharacterPreview(setupBuddy.character, setupBuddy.color));
       console.log(t('setup_restart', lang));
       break;
+    }
 
     case 'config': {
       const sub = args[1];
@@ -220,6 +224,17 @@ function handleCli(args: string[]): void {
       }
       console.log(t('stats_title', lang)(buddy.name));
       console.log(renderSideBySide(artLines, statsLines));
+      break;
+    }
+
+    case 'hud': {
+      const current = loadConfig().hudEnabled;
+      const next = !current;
+      updateConfig('hud', next ? 'on' : 'off');
+      const label = next
+        ? (lang === 'ko' ? 'ON ✓' : 'ON ✓')
+        : (lang === 'ko' ? 'OFF ✗' : 'OFF ✗');
+      console.log(`HUD ${label}`);
       break;
     }
 

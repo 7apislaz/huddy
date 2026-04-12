@@ -114,10 +114,10 @@ describe('resolveEmotion — state-based triggers', () => {
   });
 
   describe('consecutive events', () => {
-    it('higher intensity with 5+ consecutive successes', () => {
+    it('excited with 5+ consecutive successes', () => {
       const state = makeState({ consecutiveSuccesses: 5 });
       const e = resolveEmotion(0, [], state);
-      expect(e.type).toBe('happy');
+      expect(e.type).toBe('excited');
       expect(e.intensity).toBe(1.0);
     });
 

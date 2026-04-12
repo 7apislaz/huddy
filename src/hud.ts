@@ -9,32 +9,40 @@ export function buildHUDLines(data: HUDData, config: HuddyConfig): string[] {
 
   lines.push(cyan(`huddy#${VERSION}`));
 
-  if (data.contextPercent !== null) {
-    const used = Math.round(data.contextPercent);
-    const colorFn = used >= 85 ? red : used >= 70 ? yellow : green;
-    lines.push(dim('ctx:') + colorFn(`${used}%`));
+  // ctx + session 한 줄
+  {
+    const parts: string[] = [];
+    if (data.contextPercent !== null) {
+      const used = Math.round(data.contextPercent);
+      const colorFn = used >= 85 ? red : used >= 70 ? yellow : green;
+      parts.push(dim('ctx:') + colorFn(`${used}%`));
+    }
+    if (data.sessionDurationMs > 0) {
+      parts.push(dim('ses:') + green(formatDuration(data.sessionDurationMs)));
+    }
+    if (parts.length > 0) lines.push(parts.join(dim('  ')));
   }
 
-  if (data.rateLimit5h) {
-    const used = Math.round(data.rateLimit5h.percent * 10) / 10;
-    const colorFn = used >= 85 ? red : used >= 70 ? yellow : green;
-    const resetStr = data.rateLimit5h.resetsAt
-      ? dim(` (${formatRelativeTime(data.rateLimit5h.resetsAt)})`)
-      : '';
-    lines.push(dim('5h:') + colorFn(`${used}%`) + resetStr);
-  }
-
-  if (data.rateLimit7d) {
-    const used = Math.round(data.rateLimit7d.percent * 10) / 10;
-    const colorFn = used >= 85 ? red : used >= 70 ? yellow : green;
-    const resetStr = data.rateLimit7d.resetsAt
-      ? dim(` (${formatRelativeTime(data.rateLimit7d.resetsAt)})`)
-      : '';
-    lines.push(dim('7d:') + colorFn(`${used}%`) + resetStr);
-  }
-
-  if (data.sessionDurationMs > 0) {
-    lines.push(dim('session:') + green(formatDuration(data.sessionDurationMs)));
+  // 5h + 7d 한 줄
+  {
+    const parts: string[] = [];
+    if (data.rateLimit5h) {
+      const used = Math.round(data.rateLimit5h.percent * 10) / 10;
+      const colorFn = used >= 85 ? red : used >= 70 ? yellow : green;
+      const resetStr = data.rateLimit5h.resetsAt
+        ? dim(`(${formatRelativeTime(data.rateLimit5h.resetsAt)})`)
+        : '';
+      parts.push(dim('5h:') + colorFn(`${used}%`) + (resetStr ? ' ' + resetStr : ''));
+    }
+    if (data.rateLimit7d) {
+      const used = Math.round(data.rateLimit7d.percent * 10) / 10;
+      const colorFn = used >= 85 ? red : used >= 70 ? yellow : green;
+      const resetStr = data.rateLimit7d.resetsAt
+        ? dim(`(${formatRelativeTime(data.rateLimit7d.resetsAt)})`)
+        : '';
+      parts.push(dim('7d:') + colorFn(`${used}%`) + (resetStr ? ' ' + resetStr : ''));
+    }
+    if (parts.length > 0) lines.push(parts.join(dim('  ')));
   }
 
   if (data.happiness !== null) {

@@ -18,7 +18,7 @@ export interface StatuslineInput {
 }
 
 // ── 감정 시스템 ──
-export type Emotion = 'idle' | 'happy' | 'sad' | 'tired';
+export type Emotion = 'idle' | 'happy' | 'excited' | 'sad' | 'tired';
 
 export interface EmotionState {
   type: Emotion;

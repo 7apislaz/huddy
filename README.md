@@ -32,7 +32,7 @@ Restart Claude Code — your buddy appears on the statusline!
 
 ## Characters
 
-Pick from 10 unique buddies:
+Pick from 12 unique buddies:
 
 ```
     __          /\_/\      .----.      .---.      (\ /)
@@ -50,6 +50,14 @@ Pick from 10 unique buddies:
   \|__|/       ~~  ~~~    ~`~ ~`~ ~               ~~  ~~~~
    Hoot         Inky         Boo       Ember        Axie
    (owl)      (octopus)    (ghost)    (dragon)    (axolotl)
+
+ q .--. p     (°) (°)
+( °  w °)    ( °  w °)
+ (     )~   >( _____ )<
+  \____/      ( u_u )
+  /|  |\        \___/
+  Biscuit       Mochi
+  (dog)       (hamster)
 ```
 
 ---
@@ -73,7 +81,7 @@ huddy select               # Browse all 10 characters with preview
 huddy select cat           # Directly select a character
 ```
 
-Available: `duck` `cat` `blob` `penguin` `rabbit` `owl` `octopus` `ghost` `dragon` `axolotl`
+Available: `duck` `cat` `blob` `penguin` `rabbit` `dog` `hamster` `owl` `octopus` `ghost` `dragon` `axolotl`
 
 ---
 
@@ -118,6 +126,14 @@ huddy stats    # Show lifetime stats (sessions, successes, errors, first seen)
 
 ---
 
+### Toggle HUD
+
+```bash
+huddy hud      # Toggle HUD on/off
+```
+
+---
+
 ### Feed your buddy
 
 ```bash
@@ -134,20 +150,20 @@ Stats appear **to the right of the buddy art** on the statusline:
 
 ```
 }~ .----. {    huddy#0.2.1
- ( °  ° )     ctx:45%
-  ( ω  )      5h:12% (3h20m)
- /`----´\     session:42m
- ~~  ~~~~     ♥85
+ ( °  ° )     ctx:45%  ses:42m
+  ( ω  )      5h:12% (3h20m)  7d:5%
+ /`----´\     ♥85
+ ~~  ~~~~
 ```
 
 | Field | Description |
 |-------|-------------|
 | **ctx** | Context window usage — green → yellow at 70% → red at 85% |
+| **ses** | How long the current session has been running |
 | **5h / 7d** | Rate limit usage with time until reset |
-| **session** | How long the current session has been running |
 | **♥** | Buddy happiness (0–100) — green → yellow at 40 → red below |
 
-Hide the HUD with `huddy config set hud off`.
+Toggle the HUD on/off with `huddy hud`, or use `huddy config set hud off` to disable.
 
 ---
 
@@ -170,6 +186,7 @@ Claude Code → display on statusline
 |---------|---------|
 | **idle** | Default state |
 | **happy** | Tool success, commits |
+| **excited** | 5+ consecutive successes |
 | **sad** | Errors, failures |
 | **tired** | Context > 60% usage |
 

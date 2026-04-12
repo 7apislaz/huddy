@@ -5,6 +5,20 @@ All notable changes to huddy will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [0.2.2] - 2026-04-12
+
+### Added
+- **New emotion: `excited`** — triggers at 5+ consecutive successes (distinct from `happy`); all 12 characters have dedicated frames with star eyes `★`, sparkles `✦`, and max tail/energy
+- **New character: Biscuit (dog)** — floppy `q`/`p` ears, `w` nose, tongue `J` on happy/excited, wagging `~` tail; loyal and energetic
+- **New character: Mochi (hamster)** — iconic `>( )<` cheek pouches, sitting front pose, round `(°)(°)` ears, arms up on happy; curls into a ball when tired
+
+### Changed
+- **HUD layout** — `ctx` and `ses` combined on one line; `5h` and `7d` combined on one line (6 lines → 4 lines); `session:` label shortened to `ses:`
+- **`huddy setup`** — now displays a character preview immediately after registering, before the restart prompt
+
+### Added (commands)
+- **`huddy hud`** — toggle HUD on/off with a single command (previously required `huddy config set hud off/on`)
+
 ## [0.2.0] - 2026-04-12
 
 ### Added
