@@ -89,6 +89,22 @@ const messages = {
     en: (s: string) => `  Since:     ${s}`,
   },
 
+  // reset
+  reset_done: {
+    ko: '✓ 상태가 초기화되었습니다. (행복도 70, 카운터 리셋)',
+    en: '✓ State reset. (happiness 70, counters cleared)',
+  },
+
+  // rename
+  rename_usage: {
+    ko: '사용법: huddy rename <이름>',
+    en: 'Usage: huddy rename <name>',
+  },
+  rename_done: {
+    ko: (name: string) => `✓ 버디 이름을 '${name}'으로 변경했습니다.`,
+    en: (name: string) => `✓ Buddy renamed to '${name}'.`,
+  },
+
   // help
   help_title: {
     ko: 'huddy v0.1.0 — Claude Code용 Tamagotchi CLI 버디',
@@ -133,6 +149,14 @@ const messages = {
   help_stats: {
     ko: '  huddy stats          누적 통계 보기',
     en: '  huddy stats          Show lifetime stats',
+  },
+  help_rename: {
+    ko: '  huddy rename <이름>  버디 이름 변경',
+    en: '  huddy rename <name>  Rename your buddy',
+  },
+  help_reset: {
+    ko: '  huddy reset          상태 초기화 (행복도, 카운터 리셋)',
+    en: '  huddy reset          Reset state (happiness, counters)',
   },
 } as const;
 

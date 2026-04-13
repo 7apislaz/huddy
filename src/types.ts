@@ -18,7 +18,7 @@ export interface StatuslineInput {
 }
 
 // ── 감정 시스템 ──
-export type Emotion = 'idle' | 'happy' | 'excited' | 'sad' | 'tired';
+export type Emotion = 'idle' | 'happy' | 'excited' | 'sad' | 'tired' | 'working';
 
 export interface EmotionState {
   type: Emotion;
@@ -65,6 +65,7 @@ export interface HUDData {
   rateLimit7d: { percent: number; resetsAt: Date | null } | null;
   sessionDurationMs: number;
   happiness: number | null;
+  buddyName?: string;
 }
 
 // ── 설정 ──
@@ -78,7 +79,7 @@ export interface HuddyConfig {
 
 // ── Transcript 파싱 결과 ──
 export interface TranscriptEvent {
-  type: 'success' | 'error' | 'neutral';
+  type: 'success' | 'error' | 'neutral' | 'working';
   timestamp: number; // unix ms
   detail: string;
 }

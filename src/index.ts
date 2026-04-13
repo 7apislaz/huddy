@@ -8,7 +8,7 @@ import { buildHUDLines } from './hud.js';
 import { setupStatusline, updateConfig } from './config.js';
 import { characters } from './characters/index.js';
 import { loadPluginCharacters } from './plugin.js';
-import { loadState, saveState, updateState } from './state.js';
+import { loadState, saveState, updateState, DEFAULT_STATE } from './state.js';
 import { t } from './i18n.js';
 import { statSync } from 'node:fs';
 import type { HUDData } from './types.js';
@@ -73,6 +73,7 @@ async function statuslineMode(): Promise<void> {
       : null,
     sessionDurationMs: getSessionDuration(input.transcript_path),
     happiness: state.happiness,
+    buddyName: buddy.name,
   };
 
   // stdout 출력 — 버디 아트 좌측 + HUD 정보 우측 side-by-side
@@ -227,6 +228,23 @@ function handleCli(args: string[]): void {
       break;
     }
 
+    case 'rename': {
+      const newName = args[1];
+      if (!newName) {
+        console.log(t('rename_usage', lang));
+        break;
+      }
+      updateConfig('name', newName);
+      console.log(t('rename_done', lang)(newName));
+      break;
+    }
+
+    case 'reset': {
+      saveState({ ...DEFAULT_STATE, firstSeenAt: 0, lastSeenAt: Date.now() });
+      console.log(t('reset_done', lang));
+      break;
+    }
+
     case 'hud': {
       const current = loadConfig().hudEnabled;
       const next = !current;
@@ -251,6 +269,8 @@ function handleCli(args: string[]): void {
       console.log(t('help_info', lang));
       console.log(t('help_feed', lang));
       console.log(t('help_stats', lang));
+      console.log(t('help_rename', lang));
+      console.log(t('help_reset', lang));
       break;
   }
 }

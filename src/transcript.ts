@@ -52,6 +52,12 @@ function classifyLine(raw: string): TranscriptEvent | null {
     return { type: 'error', timestamp, detail };
   }
 
+  // working 판별: tool_use 타입 (Claude가 도구 호출 중)
+  if (obj['type'] === 'tool_use') {
+    const detail = typeof obj['name'] === 'string' ? obj['name'] as string : 'tool_use';
+    return { type: 'working', timestamp, detail };
+  }
+
   // 성공 판별: tool_result 컨텍스트에서 성공 키워드 확인
   // tool_result 타입이거나 content 배열 안에 tool_result가 있는 경우
   const isToolResult =

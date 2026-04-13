@@ -48,7 +48,8 @@ export function buildHUDLines(data: HUDData, config: HuddyConfig): string[] {
   if (data.happiness !== null) {
     const h = Math.round(data.happiness);
     const colorFn = h >= 70 ? green : h >= 40 ? yellow : red;
-    lines.push(magenta('♥') + colorFn(`${h}`));
+    const namePrefix = data.buddyName ? dim(`${data.buddyName} `) : '';
+    lines.push(namePrefix + magenta('♥') + colorFn(`${h}`));
   }
 
   return lines;

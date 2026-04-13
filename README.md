@@ -77,7 +77,7 @@ Registers huddy as the Claude Code statusline provider. Restart Claude Code afte
 ### Pick your character
 
 ```bash
-huddy select               # Browse all 10 characters with preview
+huddy select               # Browse all 12 characters with preview
 huddy select cat           # Directly select a character
 ```
 
@@ -109,6 +109,22 @@ huddy config set color cyan          # Change color
 huddy config set hud off             # Hide the HUD line
 huddy config set lang ko             # Switch to Korean
 huddy config set lang en             # Switch to English (default)
+```
+
+---
+
+### Rename your buddy
+
+```bash
+huddy rename "Spark"    # Give your buddy a new name
+```
+
+---
+
+### Reset state
+
+```bash
+huddy reset    # Reset happiness and counters back to defaults
 ```
 
 Available colors: `red` `green` `yellow` `blue` `magenta` `cyan` `white`
@@ -149,10 +165,10 @@ Happiness decays over time (−2/hr, max −20). Keep your buddy happy!
 Stats appear **to the right of the buddy art** on the statusline:
 
 ```
-}~ .----. {    huddy#0.2.1
+}~ .----. {    huddy#0.2.2
  ( °  ° )     ctx:45%  ses:42m
   ( ω  )      5h:12% (3h20m)  7d:5%
- /`----´\     ♥85
+ /`----´\     Axie ♥85
  ~~  ~~~~
 ```
 
@@ -161,7 +177,7 @@ Stats appear **to the right of the buddy art** on the statusline:
 | **ctx** | Context window usage — green → yellow at 70% → red at 85% |
 | **ses** | How long the current session has been running |
 | **5h / 7d** | Rate limit usage with time until reset |
-| **♥** | Buddy happiness (0–100) — green → yellow at 40 → red below |
+| **name ♥** | Buddy name + happiness (0–100) — green → yellow at 40 → red below |
 
 Toggle the HUD on/off with `huddy hud`, or use `huddy config set hud off` to disable.
 
@@ -185,6 +201,7 @@ Claude Code → display on statusline
 | Emotion | Trigger |
 |---------|---------|
 | **idle** | Default state |
+| **working** | Active tool calls detected (last 3 min) |
 | **happy** | Tool success, commits |
 | **excited** | 5+ consecutive successes |
 | **sad** | Errors, failures |

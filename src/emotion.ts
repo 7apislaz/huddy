@@ -61,7 +61,14 @@ export function resolveEmotion(
       }
     }
 
-    // ── 4순위: 에러 ──
+    // ── 4순위: 작업 중 (최근 tool_use 이벤트) ──
+    const workingEvents = recent.filter((e) => e.type === 'working');
+    if (workingEvents.length > 0) {
+      return { type: 'working', intensity: 0.8, trigger: 'tool_use' };
+    }
+
+    // ── 5순위: 에러 ──
+
     const errorEvents = recent.filter((e) => e.type === 'error');
     const totalConsecErrors = state
       ? Math.max(errorEvents.length, state.consecutiveErrors)
