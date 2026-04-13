@@ -1,3 +1,5 @@
+import { VERSION } from './version.js';
+
 type Lang = 'ko' | 'en';
 
 const messages = {
@@ -107,8 +109,8 @@ const messages = {
 
   // help
   help_title: {
-    ko: 'huddy v0.1.0 — Claude Code용 Tamagotchi CLI 버디',
-    en: 'huddy v0.1.0 — Tamagotchi CLI companion for Claude Code',
+    ko: `huddy v${VERSION} — Claude Code용 Tamagotchi CLI 버디`,
+    en: `huddy v${VERSION} — Tamagotchi CLI companion for Claude Code`,
   },
   help_commands: {
     ko: '커맨드:',
