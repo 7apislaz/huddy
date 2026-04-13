@@ -10,6 +10,7 @@ import { characters } from './characters/index.js';
 import { loadPluginCharacters } from './plugin.js';
 import { loadState, saveState, updateState, DEFAULT_STATE } from './state.js';
 import { t } from './i18n.js';
+import { checkForUpdate } from './update-check.js';
 import { statSync } from 'node:fs';
 import type { HUDData } from './types.js';
 
@@ -289,6 +290,10 @@ export async function main(): Promise<void> {
     // CLI 서브커맨드가 있으면 CLI 모드
     if (args.length > 0) {
       handleCli(args);
+      // CLI 모드에서만 업데이트 알림 (statusline 제외)
+      const lang = loadConfig().lang;
+      const latest = await checkForUpdate();
+      if (latest) console.log(t('update_available', lang)(latest));
       return;
     }
 

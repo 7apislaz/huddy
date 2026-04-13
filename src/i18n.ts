@@ -160,6 +160,12 @@ const messages = {
     ko: '  huddy reset          상태 초기화 (행복도, 카운터 리셋)',
     en: '  huddy reset          Reset state (happiness, counters)',
   },
+
+  // update notification
+  update_available: {
+    ko: (v: string) => `\n📦 새 버전 v${v}이 있습니다! → npm update -g @7apislaz/huddy`,
+    en: (v: string) => `\n📦 Update available: v${v} → npm update -g @7apislaz/huddy`,
+  },
 } as const;
 
 type MessageKey = keyof typeof messages;
