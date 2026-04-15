@@ -225,6 +225,13 @@ cp $(npm root -g)/@7apislaz/huddy/docs/commands/*.md ~/.claude/commands/
 | `/huddy-select cat` | Directly select a character |
 | `/huddy-random` | Random roll (20% rainbow!) |
 | `/huddy-feed` | Give your buddy a snack (happiness +15) |
+| `/huddy-info` | Show buddy info with RPG stats |
+| `/huddy-stats` | Show lifetime stats |
+| `/huddy-rename Spark` | Rename your buddy |
+| `/huddy-reset` | Reset happiness & counters |
+| `/huddy-hud` | Toggle HUD on/off |
+| `/huddy-config show` | View all settings |
+| `/huddy-config set color cyan` | Change a setting |
 | `/huddy-lang ko` | Switch to Korean |
 | `/huddy-lang en` | Switch to English |
 

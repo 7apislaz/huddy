@@ -1,7 +1,7 @@
 버디의 이름을 변경합니다.
 
 ```bash
-huddy rename $ARGUMENTS
+huddy rename "$ARGUMENTS"
 ```
 
-예시: `huddy rename 뽀짝이`
+예시: `/huddy-rename Spark`

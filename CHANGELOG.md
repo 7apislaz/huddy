@@ -5,6 +5,15 @@ All notable changes to huddy will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [0.2.6] - 2026-04-15
+
+### Added
+- **Slash commands** — `/huddy-info`, `/huddy-stats`, `/huddy-rename`, `/huddy-reset`, `/huddy-hud`, `/huddy-config` 슬래시 커맨드 추가
+- **Distribution docs** — `docs/commands/`에 모든 슬래시 커맨드 문서 포함 (npm 설치 후 `cp` 명령으로 일괄 등록 가능)
+
+### Fixed
+- `docs/commands/`에 `huddy-feed.md`만 포함되던 문제 수정 — 이제 전체 12개 커맨드 문서 배포
+
 ## [0.2.2] - 2026-04-12
 
 ### Added
