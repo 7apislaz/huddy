@@ -34,16 +34,7 @@ export function extractSessionId(input: StatuslineInput): string {
   return 'default-session';
 }
 
-// context_window.used_percentage 안정화 — 2% 미만 변동 무시
-let prevContextPercent: number | null = null;
-
-export function stabilizeContextPercent(raw: number | undefined): number {
-  if (raw == null) {
-    return prevContextPercent ?? 0;
-  }
-  if (prevContextPercent !== null && Math.abs(raw - prevContextPercent) < 2) {
-    return prevContextPercent;
-  }
-  prevContextPercent = raw;
-  return raw;
+/** context_window.used_percentage를 number | null로 정규화 */
+export function normalizeContextPercent(raw: number | undefined): number | null {
+  return raw ?? null;
 }

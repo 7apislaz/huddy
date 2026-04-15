@@ -4,7 +4,9 @@
 import { readdirSync, readFileSync, existsSync } from 'node:fs';
 import { join } from 'node:path';
 import { homedir } from 'node:os';
-import type { CharacterDef } from './types.js';
+import type { CharacterDef, Emotion } from './types.js';
+
+const ALL_EMOTIONS: Emotion[] = ['idle', 'happy', 'excited', 'sad', 'tired', 'working'];
 
 const PLUGIN_DIR = join(homedir(), '.huddy', 'characters');
 
@@ -42,11 +44,14 @@ export function loadPluginCharacters(): CharacterDef[] {
           typeof def.displayName === 'string' &&
           typeof def.colorDefault === 'string' &&
           def.frames &&
-          def.frames.idle?.length === 4 &&
-          def.frames.happy?.length === 4 &&
-          def.frames.sad?.length === 4 &&
-          def.frames.tired?.length === 4
+          def.frames.idle?.length === 4
         ) {
+          // 필수: idle 프레임. 나머지 감정은 누락 시 idle로 폴백
+          for (const emotion of ALL_EMOTIONS) {
+            if (!def.frames[emotion] || def.frames[emotion].length !== 4) {
+              def.frames[emotion] = def.frames.idle;
+            }
+          }
           chars.push(def as CharacterDef);
         }
       } catch {

@@ -31,13 +31,13 @@ function recentEvents(events: TranscriptEvent[], windowMs: number): TranscriptEv
  * state는 optional — 없으면 이벤트 기반으로만 동작 (하위 호환)
  */
 export function resolveEmotion(
-  contextPercent: number,
+  contextPercent: number | null,
   events: TranscriptEvent[],
   state?: BuddyState,
 ): EmotionState {
   try {
-    // ── 1순위: 컨텍스트 80% 이상 ──
-    if (contextPercent >= 80) {
+    // ── 1순위: 컨텍스트 80% 이상 (데이터 없으면 스킵) ──
+    if (contextPercent !== null && contextPercent >= 80) {
       const intensity = Math.min(1.0, 0.8 + (contextPercent - 80) / 100);
       return {
         type: 'tired',
@@ -47,7 +47,7 @@ export function resolveEmotion(
     }
 
     // ── 2순위: 컨텍스트 60% 이상 ──
-    if (contextPercent >= 60) {
+    if (contextPercent !== null && contextPercent >= 60) {
       return { type: 'tired', intensity: 0.6, trigger: 'context>=60%' };
     }
 
@@ -67,7 +67,7 @@ export function resolveEmotion(
       return { type: 'working', intensity: 0.8, trigger: 'tool_use' };
     }
 
-    // ── 5순위: 에러 ──
+    // ── 5순위: 에러 감지 ──
 
     const errorEvents = recent.filter((e) => e.type === 'error');
     const totalConsecErrors = state
@@ -83,7 +83,7 @@ export function resolveEmotion(
       };
     }
 
-    // ── 5순위: 성공 ──
+    // ── 6순위: 성공 ──
     const successEvents = recent.filter((e) => e.type === 'success');
     const totalConsecSuccesses = state
       ? Math.max(successEvents.length, state.consecutiveSuccesses)
@@ -105,7 +105,7 @@ export function resolveEmotion(
       };
     }
 
-    // ── 6순위: 낮은 행복도 ──
+    // ── 7순위: 낮은 행복도 ──
     if (state && state.happiness < 25) {
       return { type: 'sad', intensity: 0.5, trigger: 'low-happiness' };
     }

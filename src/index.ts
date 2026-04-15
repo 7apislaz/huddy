@@ -1,4 +1,4 @@
-import { readStdin, parseStdinJson, extractSessionId, stabilizeContextPercent } from './stdin.js';
+import { readStdin, parseStdinJson, extractSessionId, normalizeContextPercent } from './stdin.js';
 import { loadConfig } from './config.js';
 import { resolveBuddy } from './buddy.js';
 import { resolveEmotion } from './emotion.js';
@@ -12,7 +12,7 @@ import { loadState, saveState, updateState, DEFAULT_STATE } from './state.js';
 import { t } from './i18n.js';
 import { checkForUpdate } from './update-check.js';
 import { statSync } from 'node:fs';
-import type { HUDData } from './types.js';
+import type { CharacterDef, HUDData } from './types.js';
 
 // 하드코딩된 최소 폴백 (어떤 에러에서도 stdout 보장)
 const FALLBACK_ASCII = [
@@ -30,17 +30,17 @@ function happinessBar(happiness: number): string {
 }
 
 /** statusline 모드: stdin JSON → ASCII+HUD → stdout */
-async function statuslineMode(): Promise<void> {
+async function statuslineMode(charList: CharacterDef[]): Promise<void> {
   const raw = await readStdin();
   const input = parseStdinJson(raw);
   const config = loadConfig();
   const sessionId = extractSessionId(input);
 
   // 버디 결정
-  const buddy = resolveBuddy(sessionId, config);
+  const buddy = resolveBuddy(sessionId, config, charList);
 
   // 감정 결정
-  const contextPercent = stabilizeContextPercent(input.context_window?.used_percentage);
+  const contextPercent = normalizeContextPercent(input.context_window?.used_percentage);
   const events = input.transcript_path ? parseTranscript(input.transcript_path) : [];
 
   // 지속 상태 로드 → 업데이트 → 저장
@@ -99,7 +99,7 @@ function getSessionDuration(transcriptPath?: string): number {
 }
 
 /** CLI 서브커맨드 처리 */
-function handleCli(args: string[]): void {
+function handleCli(args: string[], charList: CharacterDef[]): void {
   const cmd = args[0];
   const lang = loadConfig().lang;
 
@@ -108,7 +108,7 @@ function handleCli(args: string[]): void {
       setupStatusline();
       console.log(t('setup_done', lang));
       const setupConfig = loadConfig();
-      const setupBuddy = resolveBuddy('preview', setupConfig);
+      const setupBuddy = resolveBuddy('preview', setupConfig, charList);
       console.log(renderCharacterPreview(setupBuddy.character, setupBuddy.color));
       console.log(t('setup_restart', lang));
       break;
@@ -132,9 +132,9 @@ function handleCli(args: string[]): void {
     case 'select': {
       const filter = args[1];
       if (filter) {
-        const found = characters.find((c) => c.species === filter);
+        const found = charList.find((c) => c.species === filter);
         if (!found) {
-          const list = characters.map((c) => c.species).join(', ');
+          const list = charList.map((c) => c.species).join(', ');
           console.log(t('select_not_found', lang)(filter, list));
           break;
         }
@@ -145,7 +145,7 @@ function handleCli(args: string[]): void {
       }
       const currentConfig = loadConfig();
       console.log(t('select_prompt', lang));
-      for (const char of characters) {
+      for (const char of charList) {
         const isCurrent = currentConfig.character === char.species;
         const marker = isCurrent ? t('select_current', lang) : '';
         console.log(renderCharacterPreview(char) + marker);
@@ -158,7 +158,7 @@ function handleCli(args: string[]): void {
 
     case 'random': {
       const COLORS = ['red', 'green', 'yellow', 'blue', 'magenta', 'cyan', 'white'];
-      const picked = characters[Math.floor(Math.random() * characters.length)];
+      const picked = charList[Math.floor(Math.random() * charList.length)];
       const isRainbow = Math.random() < 0.2;
       const color = isRainbow ? 'rainbow' : COLORS[Math.floor(Math.random() * COLORS.length)];
 
@@ -173,7 +173,7 @@ function handleCli(args: string[]): void {
 
     case 'info': {
       const config = loadConfig();
-      const buddy = resolveBuddy('preview', config);
+      const buddy = resolveBuddy('preview', config, charList);
       const state = loadState();
       const preview = renderCharacterPreview(buddy.character, buddy.color);
       const [header, ...artLines] = preview.split('\n');
@@ -198,7 +198,7 @@ function handleCli(args: string[]): void {
         saveState({ ...state, happiness: newHappiness });
         console.log(t('feed_done', lang)(gained, newHappiness));
         const config = loadConfig();
-        const buddy = resolveBuddy('preview', config);
+        const buddy = resolveBuddy('preview', config, charList);
         console.log(renderCharacterPreview(buddy.character, buddy.color));
       }
       break;
@@ -207,7 +207,7 @@ function handleCli(args: string[]): void {
     case 'stats': {
       const state = loadState();
       const config = loadConfig();
-      const buddy = resolveBuddy('preview', config);
+      const buddy = resolveBuddy('preview', config, charList);
       const preview = renderCharacterPreview(buddy.character, buddy.color);
       const [header, ...artLines] = preview.split('\n');
       const bar = happinessBar(state.happiness);
@@ -279,17 +279,17 @@ function handleCli(args: string[]): void {
 /** 메인 진입점 */
 export async function main(): Promise<void> {
   try {
-    // 플러그인 캐릭터 로드 (빌트인 배열에 병합)
+    // 플러그인 캐릭터 로드 (빌트인 + 플러그인 병합, 원본 배열 보존)
     const pluginChars = loadPluginCharacters();
-    if (pluginChars.length > 0) {
-      characters.push(...pluginChars);
-    }
+    const allCharacters = pluginChars.length > 0
+      ? [...characters, ...pluginChars]
+      : characters;
 
     const args = process.argv.slice(2);
 
     // CLI 서브커맨드가 있으면 CLI 모드
     if (args.length > 0) {
-      handleCli(args);
+      handleCli(args, allCharacters);
       // CLI 모드에서만 업데이트 알림 (statusline 제외)
       const lang = loadConfig().lang;
       const latest = await checkForUpdate();
@@ -299,11 +299,11 @@ export async function main(): Promise<void> {
 
     // stdin이 있으면 statusline 모드, 없으면 help
     if (process.stdin.isTTY) {
-      handleCli(['--help']);
+      handleCli(['--help'], allCharacters);
       return;
     }
 
-    await statuslineMode();
+    await statuslineMode(allCharacters);
   } catch {
     // 최상위 폴백: 어떤 에러에서도 최소 ASCII 출력
     console.log(FALLBACK_ASCII);

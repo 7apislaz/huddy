@@ -4,15 +4,19 @@ import { mulberry32, hashString, randInt } from './prng.js';
 
 
 /** session_id 기반으로 캐릭터 + 스탯 결정 (재현 가능) */
-export function resolveBuddy(sessionId: string, config: HuddyConfig): BuddyInstance {
+export function resolveBuddy(
+  sessionId: string,
+  config: HuddyConfig,
+  charList: CharacterDef[] = characters,
+): BuddyInstance {
   try {
     const seed = hashString(sessionId);
     const rng = mulberry32(seed);
 
     // 사용자가 캐릭터를 직접 지정한 경우
     const character = config.character
-      ? characters.find((c) => c.species === config.character) ?? pickCharacter(rng)
-      : pickCharacter(rng);
+      ? charList.find((c) => c.species === config.character) ?? pickCharacter(rng, charList)
+      : pickCharacter(rng, charList);
 
     const stats = rollStats(rng);
     const name = config.name ?? character.displayName;
@@ -21,7 +25,7 @@ export function resolveBuddy(sessionId: string, config: HuddyConfig): BuddyInsta
     return { character, name, stats, color };
   } catch {
     // 폴백: 첫 번째 캐릭터(duck) + 기본 스탯
-    const fallback = characters[0];
+    const fallback = charList[0] ?? characters[0];
     return {
       character: fallback,
       name: config.name ?? fallback.displayName,
@@ -32,8 +36,8 @@ export function resolveBuddy(sessionId: string, config: HuddyConfig): BuddyInsta
 }
 
 /** PRNG로 전체 캐릭터 중 랜덤 선택 */
-function pickCharacter(rng: () => number): CharacterDef {
-  return characters[Math.floor(rng() * characters.length)];
+function pickCharacter(rng: () => number, charList: CharacterDef[]): CharacterDef {
+  return charList[Math.floor(rng() * charList.length)];
 }
 
 /** PRNG로 RPG 스탯 생성 (각 0~100) */
