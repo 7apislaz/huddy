@@ -9,6 +9,7 @@ import { setupStatusline, updateConfig } from './config.js';
 import { characters } from './characters/index.js';
 import { loadPluginCharacters } from './plugin.js';
 import { loadState, saveState, updateState, DEFAULT_STATE } from './state.js';
+import { computeLevel } from './level.js';
 import { t } from './i18n.js';
 import { checkForUpdate } from './update-check.js';
 import { statSync } from 'node:fs';
@@ -76,6 +77,7 @@ async function statuslineMode(charList: CharacterDef[]): Promise<void> {
     sessionDurationMs: getSessionDuration(input.transcript_path),
     happiness: state.happiness,
     buddyName: buddy.name,
+    level: computeLevel(state),
   };
 
   // stdout 출력 — 버디 아트 좌측 + HUD 정보 우측 side-by-side
@@ -121,7 +123,7 @@ function handleCli(args: string[], charList: CharacterDef[]): void {
         console.log(JSON.stringify(loadConfig(), null, 2));
       } else if (sub === 'set' && args[2] && args[3]) {
         updateConfig(args[2], args[3]);
-        console.log(`✓ ${args[2]} = ${args[3]}`);
+        console.log(t('config_set_done', lang)(args[2], args[3]));
         console.log(JSON.stringify(loadConfig(), null, 2));
       } else {
         console.log(t('config_usage', lang));
@@ -176,7 +178,8 @@ function handleCli(args: string[], charList: CharacterDef[]): void {
       const config = loadConfig();
       const buddy = resolveBuddy('preview', config, charList);
       const state = loadState();
-      const preview = renderCharacterPreview(buddy.character, buddy.color);
+      const level = computeLevel(state);
+      const preview = renderCharacterPreview(buddy.character, buddy.color, level);
       const [header, ...artLines] = preview.split('\n');
       const bar = happinessBar(state.happiness);
       const infoLines = [
@@ -200,7 +203,8 @@ function handleCli(args: string[], charList: CharacterDef[]): void {
         console.log(t('feed_done', lang)(gained, newHappiness));
         const config = loadConfig();
         const buddy = resolveBuddy('preview', config, charList);
-        console.log(renderCharacterPreview(buddy.character, buddy.color));
+        const level = computeLevel({ ...state, happiness: newHappiness });
+        console.log(renderCharacterPreview(buddy.character, buddy.color, level));
       }
       break;
     }
@@ -209,7 +213,8 @@ function handleCli(args: string[], charList: CharacterDef[]): void {
       const state = loadState();
       const config = loadConfig();
       const buddy = resolveBuddy('preview', config, charList);
-      const preview = renderCharacterPreview(buddy.character, buddy.color);
+      const level = computeLevel(state);
+      const preview = renderCharacterPreview(buddy.character, buddy.color, level);
       const [header, ...artLines] = preview.split('\n');
       const bar = happinessBar(state.happiness);
       const statsLines: string[] = [
@@ -221,11 +226,11 @@ function handleCli(args: string[], charList: CharacterDef[]): void {
       if (state.firstSeenAt > 0) {
         const days = Math.floor((Date.now() - state.firstSeenAt) / 86_400_000);
         const sinceStr = days === 0
-          ? (lang === 'ko' ? '오늘' : 'today')
-          : (lang === 'ko' ? `${days}일 전` : `${days}d ago`);
+          ? t('stats_since_today', lang)
+          : t('stats_since_days', lang)(days);
         statsLines.push(t('stats_first_seen', lang)(sinceStr));
       }
-      console.log(t('stats_title', lang)(buddy.name));
+      console.log(t('stats_title', lang)(`${buddy.name} LV.${level}`));
       console.log(renderSideBySide(artLines, statsLines));
       break;
     }
@@ -251,10 +256,19 @@ function handleCli(args: string[], charList: CharacterDef[]): void {
       const current = loadConfig().hudEnabled;
       const next = !current;
       updateConfig('hud', next ? 'on' : 'off');
-      const label = next
-        ? (lang === 'ko' ? 'ON ✓' : 'ON ✓')
-        : (lang === 'ko' ? 'OFF ✗' : 'OFF ✗');
-      console.log(`HUD ${label}`);
+      console.log(t(next ? 'hud_on' : 'hud_off', lang));
+      break;
+    }
+
+    case 'lang': {
+      const target = args[1];
+      if (target !== 'ko' && target !== 'en') {
+        console.log(t('lang_usage', lang));
+        break;
+      }
+      updateConfig('lang', target);
+      // 변경된 언어로 확인 메시지 출력
+      console.log(t('lang_done', target)(target));
       break;
     }
 
@@ -273,6 +287,8 @@ function handleCli(args: string[], charList: CharacterDef[]): void {
       console.log(t('help_stats', lang));
       console.log(t('help_rename', lang));
       console.log(t('help_reset', lang));
+      console.log(t('help_hud', lang));
+      console.log(t('help_lang', lang));
       break;
   }
 }

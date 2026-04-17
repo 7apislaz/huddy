@@ -66,6 +66,7 @@ export interface HUDData {
   sessionDurationMs: number;
   happiness: number | null;
   buddyName?: string;
+  level?: number | null; // RPG 레벨 (LV.xx)
 }
 
 // ── 설정 ──
@@ -96,4 +97,5 @@ export interface BuddyState {
   totalSuccesses: number;
   firstSeenAt: number;         // unix ms — 첫 등록일
   lastProcessedCostUsd: number; // 마지막으로 만족도 계산에 반영한 세션 누적 비용 (USD)
+  totalCostUsd: number;        // 생애 누적 비용 (레벨 XP 계산용, 세션 리셋되지 않음)
 }

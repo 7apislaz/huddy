@@ -93,8 +93,11 @@ export function renderBuddy(
   }
 }
 
-/** 캐릭터 미리보기 (select 커맨드용) — idle 프레임 0 + 이름 */
-export function renderCharacterPreview(char: CharacterDef, color?: string): string {
+/**
+ * 캐릭터 미리보기 (select/info/stats 커맨드용) — idle 프레임 0 + 이름 (+ LV.xx)
+ * level이 주어지면 이름 뒤에 `LV.{n}` 강조 표시 (info/stats), 없으면 이름만 (select)
+ */
+export function renderCharacterPreview(char: CharacterDef, color?: string, level?: number): string {
   const resolvedColor = color ?? char.colorDefault;
   const isRainbow = resolvedColor === 'rainbow';
   const colorFn = getColor(resolvedColor);
@@ -102,7 +105,8 @@ export function renderCharacterPreview(char: CharacterDef, color?: string): stri
   const art = frame.lines
     .map((line, i) => isRainbow ? rainbowLine(line, i) : colorFn(line))
     .join('\n');
-  const header = `${bold(char.displayName)} ${gray(`(${char.species})`)}`;
+  const levelBadge = level !== undefined ? ` ${bold(`LV.${level}`)}` : '';
+  const header = `${bold(char.displayName)}${levelBadge} ${gray(`(${char.species})`)}`;
   return `${header}\n${art}`;
 }
 

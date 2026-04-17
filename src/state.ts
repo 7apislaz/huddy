@@ -19,6 +19,7 @@ export const DEFAULT_STATE: BuddyState = {
   totalSuccesses: 0,
   firstSeenAt: 0,
   lastProcessedCostUsd: 0,
+  totalCostUsd: 0,
 };
 
 // 토큰 소모 → 만족도 환산율: $0.10마다 +1 (≈ $1.50 세션 = +15 = feed 1회)
@@ -102,11 +103,12 @@ export function updateState(
     }
   }
 
-  // 토큰 소모 기반 행복도 증가
+  // 토큰 소모 기반 행복도 증가 + 생애 누적 비용 추적
   // 세션이 바뀌면(cost가 줄어들면) 기준점 0으로 리셋
   // 부동소수점 오차 방지: 정수 센트로 변환해 계산
   const prevCost = state.lastProcessedCostUsd ?? 0;
   let lastProcessedCostUsd = prevCost;
+  let totalCostUsd = state.totalCostUsd ?? 0;
   if (typeof currentCostUsd === 'number' && currentCostUsd >= 0) {
     const currentCents = Math.round(currentCostUsd * 100);
     const prevCents = Math.round(prevCost * 100);
@@ -120,6 +122,8 @@ export function updateState(
         happiness = Math.min(100, happiness + gain);
         // 소비된 만큼만 기준점 전진 (잔액 보존)
         lastProcessedCostUsd = (baselineCents + gain * pointCents) / 100;
+        // 생애 누적 비용 (레벨 XP 계산용) — 세션 리셋과 무관하게 계속 증가
+        totalCostUsd += gain * COST_PER_HAPPINESS_POINT;
       } else {
         // delta가 임계점에 못 미치면 baseline 유지 (역행일 땐 0으로 갱신)
         lastProcessedCostUsd = baselineCents / 100;
@@ -141,5 +145,6 @@ export function updateState(
     totalSuccesses,
     firstSeenAt,
     lastProcessedCostUsd,
+    totalCostUsd,
   };
 }

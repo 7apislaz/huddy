@@ -97,6 +97,42 @@ const messages = {
     en: '✓ State reset. (happiness 70, counters cleared)',
   },
 
+  // hud toggle
+  hud_on: {
+    ko: 'HUD 켜짐 ✓',
+    en: 'HUD ON ✓',
+  },
+  hud_off: {
+    ko: 'HUD 꺼짐 ✗',
+    en: 'HUD OFF ✗',
+  },
+
+  // lang switch
+  lang_done: {
+    ko: (lang: string) => `✓ 언어 설정: ${lang}`,
+    en: (lang: string) => `✓ Language: ${lang}`,
+  },
+  lang_usage: {
+    ko: '사용법: huddy lang <ko|en>',
+    en: 'Usage: huddy lang <ko|en>',
+  },
+
+  // config set
+  config_set_done: {
+    ko: (key: string, value: string) => `✓ ${key} = ${value} (설정 변경됨)`,
+    en: (key: string, value: string) => `✓ ${key} = ${value} (updated)`,
+  },
+
+  // stats - first seen relative time
+  stats_since_today: {
+    ko: '오늘',
+    en: 'today',
+  },
+  stats_since_days: {
+    ko: (n: number) => `${n}일 전`,
+    en: (n: number) => `${n}d ago`,
+  },
+
   // rename
   rename_usage: {
     ko: '사용법: huddy rename <이름>',
@@ -159,6 +195,14 @@ const messages = {
   help_reset: {
     ko: '  huddy reset          상태 초기화 (행복도, 카운터 리셋)',
     en: '  huddy reset          Reset state (happiness, counters)',
+  },
+  help_hud: {
+    ko: '  huddy hud            HUD 표시 토글',
+    en: '  huddy hud            Toggle HUD display',
+  },
+  help_lang: {
+    ko: '  huddy lang <ko|en>   언어 설정 변경',
+    en: '  huddy lang <ko|en>   Change language',
   },
 
   // update notification

@@ -179,11 +179,11 @@ Happiness decays over time (−2/hr, max −20). Keep your buddy happy!
 Stats appear **to the right of the buddy art** on the statusline:
 
 ```
-}~ .----. {    huddy#0.2.2
- ( °  ° )     ctx:45%  ses:42m
-  ( ω  )      5h:12% (3h20m)  7d:5%
- /`----´\     Axie ♥85
- ~~  ~~~~
+   · ✦          huddy#0.3.1
+                ctx:45%  ses:42m
+   ∧   ∧        5h:12% (3h20m)  7d:5%
+  (ㅇㅅㅇ)      Peekcat LV.12 ♥85
+ ∪━━━━━━━∪
 ```
 
 | Field | Description |
@@ -191,7 +191,7 @@ Stats appear **to the right of the buddy art** on the statusline:
 | **ctx** | Context window usage — green → yellow at 70% → red at 85% |
 | **ses** | How long the current session has been running |
 | **5h / 7d** | Rate limit usage with time until reset |
-| **name ♥** | Buddy name + happiness (0–100) — green → yellow at 40 → red below |
+| **name LV ♥** | Buddy name + level (grows with sessions/successes/cost) + happiness (0–100, green → yellow at 40 → red below) |
 
 Toggle the HUD on/off with `huddy hud`, or use `huddy config set hud off` to disable.
 
@@ -234,7 +234,7 @@ cp $(npm root -g)/@7apislaz/huddy/docs/commands/*.md ~/.claude/commands/
 
 | Command | Description |
 |---------|-------------|
-| `/huddy` | Register buddy on statusline |
+| `/huddy` | Register buddy on statusline (initial setup) |
 | `/huddy-select` | Browse & pick character |
 | `/huddy-select cat` | Directly select a character |
 | `/huddy-random` | Random roll (20% rainbow!) |

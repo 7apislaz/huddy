@@ -49,7 +49,8 @@ export function buildHUDLines(data: HUDData, config: HuddyConfig): string[] {
     const h = Math.round(data.happiness);
     const colorFn = h >= 70 ? green : h >= 40 ? yellow : red;
     const namePrefix = data.buddyName ? dim(`${data.buddyName} `) : '';
-    lines.push(namePrefix + magenta('♥') + colorFn(`${h}`));
+    const levelBadge = data.level != null ? cyan(`LV.${data.level} `) : '';
+    lines.push(namePrefix + levelBadge + magenta('♥') + colorFn(`${h}`));
   }
 
   return lines;
