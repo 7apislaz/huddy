@@ -1,6 +1,6 @@
 {
   "name": "@7apislaz/huddy",
-  "version": "0.2.6",
+  "version": "0.3.0",
   "description": "Tamagotchi-style CLI companion for Claude Code — reactive buddy + optional HUD on the statusline",
   "type": "module",
   "main": "dist/index.js",
