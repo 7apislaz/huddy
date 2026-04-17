@@ -5,6 +5,25 @@ All notable changes to huddy will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [0.3.1] - 2026-04-17
+
+### Added
+- **🎮 Level system (`LV.xx`)** — 버디가 같이 일한 경험치에 따라 레벨이 오름
+  - XP 공식: `successes + sessions×3 + floor(totalCostUsd×5)`
+  - Level: `1 + floor(sqrt(xp))` — 초반 상승 빠르고 고레벨 완만
+  - 표시 위치: `huddy info` 헤더 / `huddy stats` 타이틀 / HUD 라인
+  - 예: `Peekcat LV.12 ♥85`
+- `huddy lang <ko|en>` 직접 명령 — 기존 `huddy config set lang`의 단축 별칭
+- `huddy hud`, `huddy lang` help 항목 추가
+
+### Changed
+- `huddy hud` 출력이 언어별로 번역됨 (`HUD 켜짐/꺼짐 ✓/✗` vs `HUD ON/OFF ✓/✗`)
+- `huddy stats`의 "첫 등록" 표시가 인라인 분기 대신 i18n 키 사용
+- `huddy config set` 성공 메시지도 i18n로 번역됨
+- `docs/commands/huddy-select.md` 10종 → 13종 업데이트 (peekcat 선두)
+- README 슬래시 커맨드 테이블 `/huddy` 설명 보강
+- README HUD 예시 peekcat + LV 포함으로 갱신
+
 ## [0.3.0] - 2026-04-17
 
 ### Added
