@@ -18,7 +18,11 @@ export const DEFAULT_STATE: BuddyState = {
   totalErrors: 0,
   totalSuccesses: 0,
   firstSeenAt: 0,
+  lastProcessedCostUsd: 0,
 };
+
+// 토큰 소모 → 만족도 환산율: $0.10마다 +1 (≈ $1.50 세션 = +15 = feed 1회)
+const COST_PER_HAPPINESS_POINT = 0.10;
 
 export function loadState(): BuddyState {
   try {
@@ -50,8 +54,14 @@ const SESSION_GAP_MS = 30 * 60_000;
  * - 성공: 행복도 +5, 연속 성공 카운터 증가
  * - 에러: 행복도 -5, 연속 에러 카운터 증가
  * - 30분 이상 gap → totalSessions 증가
+ * - currentCostUsd 전달 시: 세션 누적 비용 증가분만큼 행복도 자동 증가
+ *   ($0.10당 +1, 세션 바뀌면 cost가 0으로 리셋되는 걸 감지해 자동 재시작)
  */
-export function updateState(state: BuddyState, events: TranscriptEvent[]): BuddyState {
+export function updateState(
+  state: BuddyState,
+  events: TranscriptEvent[],
+  currentCostUsd?: number,
+): BuddyState {
   const now = Date.now();
 
   // 첫 등록일
@@ -92,6 +102,34 @@ export function updateState(state: BuddyState, events: TranscriptEvent[]): Buddy
     }
   }
 
+  // 토큰 소모 기반 행복도 증가
+  // 세션이 바뀌면(cost가 줄어들면) 기준점 0으로 리셋
+  // 부동소수점 오차 방지: 정수 센트로 변환해 계산
+  const prevCost = state.lastProcessedCostUsd ?? 0;
+  let lastProcessedCostUsd = prevCost;
+  if (typeof currentCostUsd === 'number' && currentCostUsd >= 0) {
+    const currentCents = Math.round(currentCostUsd * 100);
+    const prevCents = Math.round(prevCost * 100);
+    const pointCents = Math.round(COST_PER_HAPPINESS_POINT * 100); // 10센트
+    // 새 세션 감지: 비용이 역행하면(줄어들면) 기준점 0으로 리셋
+    const baselineCents = currentCents < prevCents ? 0 : prevCents;
+    const deltaCents = currentCents - baselineCents;
+    if (deltaCents > 0) {
+      const gain = Math.floor(deltaCents / pointCents);
+      if (gain > 0) {
+        happiness = Math.min(100, happiness + gain);
+        // 소비된 만큼만 기준점 전진 (잔액 보존)
+        lastProcessedCostUsd = (baselineCents + gain * pointCents) / 100;
+      } else {
+        // delta가 임계점에 못 미치면 baseline 유지 (역행일 땐 0으로 갱신)
+        lastProcessedCostUsd = baselineCents / 100;
+      }
+    } else {
+      // delta 0 또는 역행 중 gain=0 케이스 → baseline 채택
+      lastProcessedCostUsd = baselineCents / 100;
+    }
+  }
+
   return {
     happiness,
     consecutiveErrors,
@@ -102,5 +140,6 @@ export function updateState(state: BuddyState, events: TranscriptEvent[]): Buddy
     totalErrors,
     totalSuccesses,
     firstSeenAt,
+    lastProcessedCostUsd,
   };
 }

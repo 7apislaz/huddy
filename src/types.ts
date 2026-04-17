@@ -95,4 +95,5 @@ export interface BuddyState {
   totalErrors: number;
   totalSuccesses: number;
   firstSeenAt: number;         // unix ms — 첫 등록일
+  lastProcessedCostUsd: number; // 마지막으로 만족도 계산에 반영한 세션 누적 비용 (USD)
 }

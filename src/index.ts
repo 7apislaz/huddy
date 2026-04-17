@@ -44,8 +44,9 @@ async function statuslineMode(charList: CharacterDef[]): Promise<void> {
   const events = input.transcript_path ? parseTranscript(input.transcript_path) : [];
 
   // 지속 상태 로드 → 업데이트 → 저장
+  // 토큰 소모량 반영: 세션 누적 비용이 증가한 만큼 행복도가 자동으로 오름
   const prevState = loadState();
-  const state = updateState(prevState, events);
+  const state = updateState(prevState, events, input.cost?.total_cost_usd);
   saveState(state);
 
   const emotion = resolveEmotion(contextPercent, events, state);
