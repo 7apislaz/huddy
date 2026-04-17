@@ -32,7 +32,21 @@ Restart Claude Code — your buddy appears on the statusline!
 
 ## Characters
 
-Pick from 12 unique buddies:
+### 🌟 Brand Mascot
+
+Meet **Peekcat** — huddy's signature character. Always hiding behind the wall, only the ears stay visible no matter what mood it's in. Default character for new installs.
+
+```
+   · ✦      
+            
+   ∧   ∧    
+  (ㅇㅅㅇ)  
+ ∪━━━━━━━∪  
+   Peekcat
+  (peekcat) — RARE
+```
+
+### 😺 12 More Friends
 
 ```
     __          /\_/\      .----.      .---.      (\ /)
@@ -77,11 +91,11 @@ Registers huddy as the Claude Code statusline provider. Restart Claude Code afte
 ### Pick your character
 
 ```bash
-huddy select               # Browse all 12 characters with preview
-huddy select cat           # Directly select a character
+huddy select               # Browse all 13 characters with preview
+huddy select peekcat       # Directly select a character
 ```
 
-Available: `duck` `cat` `blob` `penguin` `rabbit` `dog` `hamster` `owl` `octopus` `ghost` `dragon` `axolotl`
+Available: `peekcat` `duck` `cat` `blob` `penguin` `rabbit` `dog` `hamster` `owl` `octopus` `ghost` `dragon` `axolotl`
 
 ---
 

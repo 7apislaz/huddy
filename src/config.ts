@@ -8,6 +8,7 @@ const CONFIG_DIR = join(homedir(), '.huddy');
 const CONFIG_PATH = join(CONFIG_DIR, 'config.json');
 
 const DEFAULT_CONFIG: HuddyConfig = {
+  character: 'peekcat',
   hudEnabled: true,
   lang: 'en',
 };
